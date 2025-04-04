@@ -5,10 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aiogram>=3.19.0",
     "fastapi[standard]>=0.115.12",
-    "llama-index>=0.12.25",
+    "llama-index-embeddings-huggingface",
+    "llama-index>=0.12.27",
     "llama-index-llms-groq>=0.3.1",
-    "pydantic>=2.10.6",
+    "loguru>=0.7.3",
     "pydantic-settings>=2.8.1",
+    "tavily-python>=0.5.2",
     "uvicorn[standard]>=0.34.0",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

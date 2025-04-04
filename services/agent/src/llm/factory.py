@@ -1,5 +1,10 @@
+# 1st party
 from typing import Dict
 
+# internal lib
+from src.config import config
+
+# 3rd party lib
 from src.llm.base import (
     BaseLLM,
     ModelName,
@@ -39,3 +44,7 @@ class LLMFactory:
             raise ValueError(
                 f"Unsupported combination: {model_provider} - {model_name}"
             )
+
+
+factory = LLMFactory().get_llm(config.model_provider, config.model_name)
+llm = factory.model()
