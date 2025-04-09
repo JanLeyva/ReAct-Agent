@@ -11,3 +11,6 @@ wheels/
 
 # 
 .env
+
+# docker-compose volumes: qdrant/storag
+docker-compose/qdrant_data
