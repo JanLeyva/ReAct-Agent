@@ -5,9 +5,10 @@ import logging
 
 # internal lib
 from src.config import config
-from src.react_agent import ReActAgent
+# from src.react_agent import ReActAgent
+from agent_rag_workflow import MemAgent
 from src.llm.factory import llm
-from src.tools import tools
+# from src.tools import tools
 
 # 3rd party
 from aiogram import Bot, Dispatcher, html
@@ -15,14 +16,15 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-from llama_index.core.workflow import Context
+# from llama_index.core.workflow import Context
 # Bot token can be obtained via https://t.me/BotFather
 # All handlers should be attached to the Router (or Dispatcher)
 
 
-agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
+# agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
+agent = MemAgent(llm=llm, tools=None, timeout=120, verbose=True)
 
-ctx = Context(agent)
+# ctx = Context(agent)
 dp = Dispatcher()
 
 
@@ -55,7 +57,7 @@ async def echo_handler(message: Message) -> None:
         None
     """
     try:
-        response = await agent.run(input=message.text, ctx=ctx)
+        response = await agent.run(input=message.text)
         # Send a copy of the received message
         await message.answer(response["response"])
     except TypeError:
