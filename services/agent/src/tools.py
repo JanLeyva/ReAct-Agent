@@ -1,65 +1,36 @@
 # internal lib
-from src.llm.factory import llm
+from typing import Annotated, Optional
+
 # 3rd party
-import qdrant_client
 from llama_index.core.tools import FunctionTool
-from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
-from llama_index.core.tools import QueryEngineTool
-# from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.core import StorageContext
-from llama_index.vector_stores.qdrant import QdrantVectorStore
-from llama_index.embeddings.fastembed import FastEmbedEmbedding
-
-# # set LLM globaly
-# Settings.llm = llm
-# Settings.embed_model = FastEmbedEmbedding(
-#     model_name="BAAI/bge-small-en-v1.5"
-# )
-# def add(x: int, y: int) -> int:
-#     """Useful function to add two numbers."""
-#     return x + y
 
 
-# def multiply(x: int, y: int) -> int:
-#     """Useful function to multiply two numbers."""
-#     return x * y
+def get_restaurant_recommendation(
+    text: Annotated[str, "user preferences for the restaurant"],
+    coordinates: Annotated[
+        Optional[list], "Longitute and Latitue of user such as (41.387535, 2.175552)"
+    ],
+) -> str:
+    """Useful for getting restaurants recommendations base on user request and optional coordinates"""
+    # TODO delete the mook
+    if not coordinates:
+        coordinates = "fake"
+    return "Restaurant Lombo"
 
 
+def get_coordinates_from_street(street: Annotated[str, "from street get coordinates"]):
+    """Useful to convert a street to coordinates to be used in `get_restaurant_recommendation`"""
+    return [41.387588, 2.175582]
 
-# client = qdrant_client.QdrantClient(
-#     # you can use :memory: mode for fast and light-weight experiments,
-#     # it does not require to have Qdrant deployed anywhere
-#     # but requires qdrant-client >= 1.1.1
-#     # location=":memory:"
-#     # otherwise set Qdrant instance address with:
-#     # url="http://:"
-#     # otherwise set Qdrant instance with host and port:
-#     host="localhost",
-#     port=6333
-#     # set API KEY for Qdrant Cloud
-#     # api_key="",
-# )
 
-# # load document
-# doc_path = "/Users/esengineer/Documents/_dev/whatsapp-agent/docs/docs_barcelona"
-# documents = SimpleDirectoryReader(doc_path).load_data()
-# vector_store = QdrantVectorStore(client=client, collection_name="turism_guide_Barcelona")
-# storage_context = StorageContext.from_defaults(vector_store=vector_store)
-# index = VectorStoreIndex.from_documents(
-#     documents,
-#     storage_context=storage_context,
-# )
+def ask_more_information(
+    input: Annotated[str, "Ask questions to gather more information"],
+):
+    return input
 
-# query_engine = index.as_query_engine()
-# vector_tool = QueryEngineTool.from_defaults(
-#     query_engine=query_engine,
-#     description=(
-#         "Useful for retrieving specific context for turism in Barcelona"
-#     ),
-# )
 
-# tools = [
-#     vector_tool,
-#     FunctionTool.from_defaults(add),
-#     FunctionTool.from_defaults(multiply),
-# ]
+tools = [
+    FunctionTool.from_defaults(get_restaurant_recommendation),
+    FunctionTool.from_defaults(get_coordinates_from_street),
+    # FunctionTool.from_defaults(ask_more_information),
+]

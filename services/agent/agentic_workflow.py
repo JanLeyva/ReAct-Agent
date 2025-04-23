@@ -3,30 +3,26 @@ import sys
 from src.llm.factory import llm
 
 import asyncio
-from llama_index.core.workflow import (
-    StartEvent,
-    StopEvent,
-    Workflow,
-    step,
-    Context
-)
+from llama_index.core.workflow import StartEvent, StopEvent, Workflow, step, Context
 from llama_index.core.workflow import Event
+
 # in case we want to draw our worglow graph
 from llama_index.utils.workflow import draw_all_possible_flows
 # to draw
 # draw_all_possible_flows(
-#     basic_workflow, 
+#     basic_workflow,
 #     filename="workflows/basic_workflow.html"
 # )
-
 
 
 # let's build a workflow step by step
 class FirstEvent(Event):
     first_output: str
 
+
 class SecondEvent(Event):
     second_output: str
+
 
 # define Workflow - Basic
 # class MyWorkflow(Workflow):
@@ -46,7 +42,6 @@ class SecondEvent(Event):
 #         return StopEvent(result="Workflow complete.")
 
 
-
 # class MyWorkflow(Workflow):
 #     # declare a function as a step
 #     @step
@@ -57,8 +52,11 @@ class SecondEvent(Event):
 
 # Loop Workflow
 import random
+
+
 class LoopEvent(Event):
     loop_output: str
+
 
 class MyWorkflow(Workflow):
     @step
@@ -79,17 +77,20 @@ class MyWorkflow(Workflow):
     async def step_three(self, ev: SecondEvent) -> StopEvent:
         print(ev.second_output)
         return StopEvent(result="Workflow complete.")
-    
+
 
 # Branching
 class BranchA1Event(Event):
     payload: str
 
+
 class BranchA2Event(Event):
     payload: str
 
+
 class BranchB1Event(Event):
     payload: str
+
 
 class BranchB2Event(Event):
     payload: str
@@ -124,25 +125,32 @@ class BranchWorkflow(Workflow):
     async def step_b2(self, ev: BranchB2Event) -> StopEvent:
         print(ev.payload)
         return StopEvent(result="Branch B complete.")
-    
+
+
 # Combining diferent type events
 class StepAEvent(Event):
     query: str
 
+
 class StepACompleteEvent(Event):
     result: str
+
 
 class StepBEvent(Event):
     query: str
 
+
 class StepBCompleteEvent(Event):
     result: str
+
 
 class StepCEvent(Event):
     query: str
 
+
 class StepCCompleteEvent(Event):
     result: str
+
 
 class ConcurrentFlow(Workflow):
     @step
@@ -181,24 +189,27 @@ class ConcurrentFlow(Workflow):
             ev,
             [StepCCompleteEvent, StepACompleteEvent, StepBCompleteEvent],
         )
-        if (events is None):
+        if events is None:
             return None
 
         # do something with all 3 results together
         print("All events received: ", events)
         return StopEvent(result="Done")
-    
+
 
 # Now let's do a Streaming Workglow
 class FirstEvent(Event):
     first_output: str
 
+
 class SecondEvent(Event):
     second_output: str
     response: str
 
+
 class TextEvent(Event):
     delta: str
+
 
 class ProgressEvent(Event):
     msg: str
@@ -246,10 +257,7 @@ async def main():
     final_result = await handler
     print("Final result = ", final_result)
 
-    draw_all_possible_flows(
-    workflow, 
-    filename="workflow.html"
-)
+    draw_all_possible_flows(workflow, filename="workflow.html")
 
 
 if __name__ == "__main__":
