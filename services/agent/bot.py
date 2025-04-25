@@ -1,5 +1,4 @@
 # 1st party
-import os
 import sys
 import asyncio
 import logging
@@ -21,7 +20,6 @@ from aiogram.types import Message
 # from llama_index.core.workflow import Context
 # Bot token can be obtained via https://t.me/BotFather
 # All handlers should be attached to the Router (or Dispatcher)
-
 
 
 agent = MemAgent(llm=llm, tools=tools, timeout=120, verbose=True)

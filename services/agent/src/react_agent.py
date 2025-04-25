@@ -8,6 +8,7 @@ from src.templates.prompts import (
     ROUTER_PROMPT,
     ANSWER_PROMPT,
 )
+
 # 3rd party libs
 from loguru import logger
 from llama_index.core.workflow import StartEvent, StopEvent, Workflow, step, Context
@@ -31,7 +32,9 @@ from llama_index.embeddings.fastembed import FastEmbedEmbedding
 from llama_index.core import global_handler, set_global_handler
 
 
-set_global_handler("opik",)
+set_global_handler(
+    "opik",
+)
 opik_callback_handler = global_handler
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # Memory Long-Short Term

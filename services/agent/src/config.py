@@ -17,6 +17,7 @@ class Config(BaseSettings):
     model_provider: Literal["groq", "openai"]
     model_name: Literal["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gpt-4o-min"]
 
+
 config = Config()
 
 # TODO: testing propuse, we can delete it in PROD
