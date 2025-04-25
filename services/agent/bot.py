@@ -7,7 +7,7 @@ import logging
 from src.config import config
 
 # from src.react_agent import ReActAgent
-from agent_rag_workflow import MemAgent
+from src.react_agent import MemAgent
 from src.llm.factory import llm
 from src.tools import tools
 

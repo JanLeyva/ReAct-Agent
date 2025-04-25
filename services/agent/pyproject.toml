@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiogram==3.19.0",
+    "geopy>=2.4.1",
+    "googlemaps>=4.10.0",
     "llama-index>=0.12.28",
     "llama-index-embeddings-fastembed>=0.3.1",
     "llama-index-embeddings-huggingface>=0.5.2",
@@ -14,6 +16,7 @@ dependencies = [
     "llama-index-utils-workflow>=0.3.1",
     "llama-index-vector-stores-qdrant>=0.6.0",
     "loguru>=0.7.3",
+    "mcp>=1.6.0",
     "numpy==1.26",
     "pydantic-settings>=2.8.1",
     "qdrant-client>=1.12.1",
