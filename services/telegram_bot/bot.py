@@ -17,7 +17,6 @@ from aiogram.types import Message
 dp = Dispatcher()
 
 
-
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     """
@@ -50,16 +49,11 @@ def send_request_msg(message: Message) -> str:
     """
     # request to Agent API
     # Define the URL endpoint
-    url = 'http://127.0.0.1:8000/telegram/'
+    url = "http://127.0.0.1:8000/telegram/"
     # Prepare the headers
-    headers = {
-        'accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
-    payload = {
-        "message": message.text
-    }
+    payload = {"message": message.text}
     # Send the POST request
     return requests.post(url, json=payload, headers=headers)
 

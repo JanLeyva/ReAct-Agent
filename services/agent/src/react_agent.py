@@ -80,7 +80,7 @@ class FunctionOutputEvent(Event):
     output: ToolOutput
 
 
-class MemAgent(Workflow):
+class ReActAgent(Workflow):
     def __init__(
         self,
         *args: Any,

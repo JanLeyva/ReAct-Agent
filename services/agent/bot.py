@@ -7,7 +7,7 @@ import logging
 from src.config import config
 
 # from src.react_agent import ReActAgent
-from src.react_agent import MemAgent
+from src.react_agent import ReActAgent
 from src.llm.factory import llm
 from src.tools import tools
 
@@ -22,7 +22,7 @@ from aiogram.types import Message
 # All handlers should be attached to the Router (or Dispatcher)
 
 
-agent = MemAgent(llm=llm, tools=tools, timeout=120, verbose=True)
+agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
 
 # ctx = Context(agent)
 dp = Dispatcher()
