@@ -129,7 +129,8 @@ class ReActAgent(Workflow):
         ]
         # request llm router
         response = self.llm.chat(input_llm)
-        logger.info(response.message.content)
+        if self._verbose:
+            logger.info(response.message.content)
 
         if "react" in response.message.content:
             return AgenticEvent()

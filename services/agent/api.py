@@ -1,5 +1,4 @@
 # internal lib
-from src.config import config # init env variables
 from src.react_agent import ReActAgent
 from src.llm.factory import llm
 from src.tools import tools
@@ -18,6 +17,7 @@ app = FastAPI()
 
 class TelegramMsg(BaseModel):
     message: str
+    chat_id: int
 
 
 @app.get("/")
@@ -36,10 +36,11 @@ async def main(message: str) -> str:
 def get_agent_response(request: TelegramMsg):
     logger.info(f"message: {request.message}")
     message = asyncio.run(main(request.message))
-    logger.info(f"response: {message}")
+    logger.info(f"response: {message} | chat_id: {request.chat_id}")
 
     return {
         "response": message,
+        "chat_id": request.chat_id,
         "timestamp": time(),
     }
 
