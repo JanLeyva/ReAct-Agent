@@ -5,24 +5,19 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "aiogram==3.19.0",
     "fastapi>=0.115.12",
-    "geopy>=2.4.1",
     "googlemaps>=4.10.0",
     "llama-index>=0.12.28",
     "llama-index-callbacks-opik>=1.1.0",
-    "llama-index-embeddings-fastembed>=0.3.1",
-    "llama-index-embeddings-huggingface>=0.5.2",
+    "llama-index-embeddings-google-genai>=0.1.0",
     "llama-index-llms-groq>=0.3.1",
-    "llama-index-memory-mem0>=0.3.0",
     "llama-index-utils-workflow>=0.3.1",
     "llama-index-vector-stores-qdrant>=0.6.0",
     "loguru>=0.7.3",
-    "mcp>=1.6.0",
     "numpy==1.26",
     "opik>=1.7.11",
     "pydantic-settings>=2.8.1",
-    "qdrant-client>=1.12.1",
+    "uvicorn>=0.34.2",
 ]
 
 [tool.uv]

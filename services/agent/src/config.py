@@ -12,6 +12,7 @@ class Config(BaseSettings):
     tavily_api_key: Optional[str]
     api_key_google_maps: Optional[str]
     api_key_opik: Optional[str]
+    api_key_google_genai: Optional[str]
     opik_workspace: Optional[str]
     opik_project_name: Optional[str]
     model_provider: Literal["groq", "openai"]

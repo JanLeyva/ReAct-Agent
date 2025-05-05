@@ -2,13 +2,13 @@
 from src.react_agent import ReActAgent
 from src.llm.factory import llm
 from src.tools import tools
-import asyncio
 
 # 3rd party
+import asyncio
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from time import time
-import uvicorn
 from loguru import logger
 
 agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)

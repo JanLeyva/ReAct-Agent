@@ -8,9 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
-
 # 
 .env
+.ruff*
+uv.lock
 
 # docker-compose volumes: qdrant/storag
 docker-compose/qdrant_data

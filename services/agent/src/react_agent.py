@@ -3,6 +3,7 @@ from typing import Any, List
 import os
 
 # internal libs
+from src.config import config
 from src.templates.prompts import (
     CONTEXT_REACT_CHAT_SYSTEM_HEADER,
     ROUTER_PROMPT,
@@ -28,7 +29,10 @@ from llama_index.core.memory import (
     ChatMemoryBuffer,
 )
 from llama_index.core.base.llms.types import MessageRole
-from llama_index.embeddings.fastembed import FastEmbedEmbedding
+
+# uncomment line below and line 55 to use Open Source embedding model
+# from llama_index.embeddings.fastembed import FastEmbedEmbedding
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.core import global_handler, set_global_handler
 
 
@@ -37,11 +41,20 @@ set_global_handler(
 )
 opik_callback_handler = global_handler
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+# embeding model
+embed_model = GoogleGenAIEmbedding(
+    model_name="text-embedding-004",
+    embed_batch_size=100,
+    api_key=config.api_key_google_genai,
+)
+
 # Memory Long-Short Term
 # TODO init qdrant database or similar
 vector_memory = VectorMemory.from_defaults(
     vector_store=None,  # leave as None to use default in-memory vector store
-    embed_model=FastEmbedEmbedding(model_name="BAAI/bge-small-en-v1.5"),
+    # embed_model=FastEmbedEmbedding(model_name="BAAI/bge-small-en-v1.5"),
+    embed_model=embed_model,
     retriever_kwargs={"similarity_top_k": 1},
 )
 
