@@ -19,7 +19,7 @@ def send_request_msg(message: str, chat_id: int) -> str:
     """
     # request to Agent API
     # Define the URL endpoint
-    url = "http://127.0.0.1:8000/telegram/"
+    url = f"{os.environ['ELB_ENDPOINT']}/telegram/"
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
@@ -38,11 +38,11 @@ def lambda_handler(event, context):
 
     if text:
         # TODO: uncomment below and set up ECS url to API
-        # response = _send_request_msg(text, chat_id)
-        # response = response.json()
+        response = send_request_msg(text, chat_id)
+        response = response.json()
         # response = {"response": f"test lambda - {text}", "chat_id": 123}
-        # reply = response.get("response", "")
-        reply = f"You said: {text} - {chat_id}"
+        reply = response.get("response", "")
+        # reply = f"You said: {text} - {chat_id}"
         # reply to user
         token = os.environ["TELEGRAM_TOKEN"]
         requests.post(

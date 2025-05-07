@@ -22,7 +22,7 @@ class TelegramMsg(BaseModel):
 
 @app.get("/")
 def health():
-    return {"health": "OK"}
+    return {"message": "OK"}
 
 
 async def main(message: str) -> str:

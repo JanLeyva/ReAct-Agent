@@ -1,5 +1,6 @@
 .git
 .venv
+.env
 *.log
 .DS_Store
 .ruff_cache
