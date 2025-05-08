@@ -18,6 +18,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "googlemaps" },
+    { name = "httpx" },
     { name = "llama-index" },
     { name = "llama-index-callbacks-opik" },
     { name = "llama-index-embeddings-google-genai" },
@@ -28,6 +29,7 @@ dependencies = [
     { name = "numpy" },
     { name = "opik" },
     { name = "pydantic-settings" },
+    { name = "pytest" },
     { name = "uvicorn" },
 ]
 
@@ -35,6 +37,7 @@ dependencies = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115.12" },
     { name = "googlemaps", specifier = ">=4.10.0" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "llama-index", specifier = ">=0.12.28" },
     { name = "llama-index-callbacks-opik", specifier = ">=1.1.0" },
     { name = "llama-index-embeddings-google-genai", specifier = ">=0.1.0" },
@@ -45,6 +48,7 @@ requires-dist = [
     { name = "numpy", specifier = "==1.26" },
     { name = "opik", specifier = ">=1.7.11" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
+    { name = "pytest", specifier = ">=8.3.5" },
     { name = "uvicorn", specifier = ">=0.34.2" },
 ]
 
