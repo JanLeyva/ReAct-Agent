@@ -1,15 +1,17 @@
 # internal libs
 from api import app
+
 # 3rd party
 from fastapi.testclient import TestClient
-from loguru import logger
 
 client = TestClient(app)
+
 
 def test_returns_200_ok():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "OK"}
+
 
 def test_telegram_post():
     # Prepare the headers
