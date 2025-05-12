@@ -1,0 +1,15 @@
+[project]
+name = "search-engine"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cohere>=5.15.0",
+    "loguru>=0.7.3",
+    "pandas>=2.2.3",
+    "psycopg>=3.2.8",
+    "psycopg2>=2.9.10",
+    "pydantic-settings>=2.9.1",
+    "timescale-vector>=0.0.7",
+]

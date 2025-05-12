@@ -1,0 +1,604 @@
+{
+    "html_attributions": [],
+    "result": {
+        "address_components": [
+            {
+                "long_name": "230",
+                "short_name": "230",
+                "types": [
+                    "street_number"
+                ]
+            },
+            {
+                "long_name": "Carrer de Provença",
+                "short_name": "Carrer de Provença",
+                "types": [
+                    "route"
+                ]
+            },
+            {
+                "long_name": "L'Eixample", "short_name": "L'Eixample",
+                "types": [
+                    "sublocality_level_1",
+                    "sublocality",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Barcelona",
+                "short_name": "Barcelona",
+                "types": [
+                    "locality",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Barcelona",
+                "short_name": "B",
+                "types": [
+                    "administrative_area_level_2",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Catalunya",
+                "short_name": "CT",
+                "types": [
+                    "administrative_area_level_1",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Spain",
+                "short_name": "ES",
+                "types": [
+                    "country",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "08036",
+                "short_name": "08036",
+                "types": [
+                    "postal_code"
+                ]
+            }
+        ],
+        "adr_address": "<span class='street-address'>Carrer de Provença, 230</span>, <span class="extended-address">L&#39;Eixample</span>, <span class="postal-code">08036</span> <span class="locality">Barcelona</span>, <span class="country-name">Spain</span>",
+        "business_status": "OPERATIONAL",
+        "current_opening_hours": {
+            "open_now": True,
+            "periods": [
+                {
+                    "close": {
+                        "date": "2025-05-18",
+                        "day": 0,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-18",
+                        "day": 0,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-18",
+                        "day": 0,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-18",
+                        "day": 0,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-12",
+                        "day": 1,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-12",
+                        "day": 1,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-12",
+                        "day": 1,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-12",
+                        "day": 1,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-13",
+                        "day": 2,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-13",
+                        "day": 2,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-13",
+                        "day": 2,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-13",
+                        "day": 2,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-14",
+                        "day": 3,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-14",
+                        "day": 3,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-14",
+                        "day": 3,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-14",
+                        "day": 3,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-15",
+                        "day": 4,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-15",
+                        "day": 4,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-15",
+                        "day": 4,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-15",
+                        "day": 4,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-16",
+                        "day": 5,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-16",
+                        "day": 5,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-16",
+                        "day": 5,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-16",
+                        "day": 5,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-17",
+                        "day": 6,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "date": "2025-05-17",
+                        "day": 6,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "date": "2025-05-17",
+                        "day": 6,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "date": "2025-05-17",
+                        "day": 6,
+                        "time": "2000"
+                    }
+                }
+            ],
+            "weekday_text": [
+                "Monday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Tuesday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Wednesday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Thursday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Friday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Saturday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Sunday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM"
+            ]
+        },
+        "delivery": False,
+        "dine_in": True,
+        "editorial_summary": {
+            "language": "en",
+            "overview": "Compact, chic outpost with an open kitchen turning out inventive, upscale tapas with wine."
+        },
+        "formatted_address": "Carrer de Provença, 230, L'Eixample,08036 Barcelona, Spain",
+        "formatted_phone_number": "934 51 61 93",
+        "geometry": {
+            "location": {
+                "lat": 41.3912678,
+                "lng": 2.157255300000001
+            },
+            "viewport": {
+                "northeast": {
+                    "lat": 41.3926860802915,
+                    "lng": 2.158511980291502
+                },
+                "southwest": {
+                    "lat": 41.3899881197085,
+                    "lng": 2.155814019708498
+                }
+            }
+        },
+        "icon": "https: //maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+        "international_phone_number": "+34 934 51 61 93",
+        "name": "Gresca",
+        "opening_hours": {
+            "open_now": True,
+            "periods": [
+                {
+                    "close": {
+                        "day": 0,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 0,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 0,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 0,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 1,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 1,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 1,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 1,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 2,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 2,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 2,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 2,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 3,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 3,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 3,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 3,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 4,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 4,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 4,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 4,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 5,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 5,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 5,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 5,
+                        "time": "2000"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 6,
+                        "time": "1530"
+                    },
+                    "open": {
+                        "day": 6,
+                        "time": "1330"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 6,
+                        "time": "2230"
+                    },
+                    "open": {
+                        "day": 6,
+                        "time": "2000"
+                    }
+                }
+            ],
+            "weekday_text": [
+                "Monday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Tuesday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Wednesday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Thursday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Friday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Saturday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM",
+                "Sunday: 1:30\u2009–\u20093:30\u202fPM, 8:00\u2009–\u200910:30\u202fPM"
+            ]
+        },
+        "photos": [
+            {
+                "height": 1800,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/114118451392288609524'>Pako Valera</a>"
+                ],
+                "photo_reference": "AXQCQNS4H2DlghxzlZPc49iI_pojG3cGAJCEEzxaTqQ9PAYu5q9Py6e20oXxTAYTurkWTw-ABjBtdGk5Gvx5o-RkVyQPWE2a_cGrzKJhaE660URpBNZMI813kCs5a3SK6Z_hWucddJtV4pyeFS_R2Wrm9g2WerWJiyxUNw7v_sz9g2HYAZTw5nKTVBNh-K9I5sMCWsMBrTBVrspuJrvgCTzdBuDiM7Z6dlQ_dJ4p7yYvVtpF7sFZBfU82-lTZsPhIhLzRFHNavzWS4TRibI8P7RQ-CwtcFznfrBOk2Y7vMfkdKvemjjkk7Mm4vg2ltV4n4OaiJ_O2IgoMnI4d_JxEGwQZ5XKtoIishKipBZtNWWhfWbBIOXPGXGF6qqWru9kP12n53cHbl3iWQbaLFSeBtss05LQS8OIik0uHPzOEihD81scb6PTdGOCyJ-xzPVhrPRU2T7n9ePQCPEPlzujkjhSEwSY_gqoJMUNiy-DI7vM9w3dGJKDedFlfWfk5GI1zwt6VCY5eKADQhOXHYH6s47R-KTLTXRDbtwFD9kNmW3QyQ0TptICdMPhXZjMMlEedbBTo1y3mG3X-vUkYQwbKcYstIgvz_xsx2uwiQpZg0rWPeTMnIHxNjQzVeDpPPUXKrOzpG8tQMJ9",
+                "width": 4000
+            },
+            {
+                "height": 4284,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/114103448494400565213'>Beca Chan</a>"
+                ],
+                "photo_reference": "AXQCQNSPoU2W71EmigzVwnfQ4AjiDHlVgx6DhepbYC6dNxagGnTPVzTnOM3vwhslWKiBbPc6vrdRPAguxA1-P6CO7D_3bnQu3V7G5gii2MaOTWZ8lFOKqXSW71hOEBhXKC07bx1VvyL6Jy--VVXgZy0EWHGB4pcfFt7XBwCW90ybm_1nCDKJFHRih5wuW8DXqchGICeBBImf3ZQJNfceX1hDlR_MKMREhZoqokv2UzE7uIYWzadZa_xuPMa8MRgYBUEJU2dT3Mhg7omQu-U9CbNzFe02kFTEL1N_XQazinDeg4FaOXes68IRDQJN_uvosxrewhGDd9ncWOj1oSQHmUGNSUpFeNqWMZsraC_eSPqNy_q6ZGwPAWPF3yRXTUmnn00ABLaKr5Ik9FVjE7ZUyqMlXMNdlD7FGIo1aY4MGp4FdeeiEF3Iq8tgZtu6KBxz00ejvGthCKJICe4xlQ9cZa8TZuv2Q0Vg5rKEVGke6TevzI_h9bkQbGrGGarhcnkyHGyJ8Fiarnlp8HSojltypCkNm8_f7rkmdVZrl0sdbPMimqLEScYLSdjB4L0Pm1uYLfPSTtoaLhn61IsKxfAYgW13yH5uI940UBsvFYQku7Rh6vbFDL5aw61kKWCu4qoIJhk2jqrprQ",
+                "width": 5712
+            },
+            {
+                "height": 4284,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/106988452467697822002'>P N</a>"
+                ],
+                "photo_reference": "AXQCQNRRD5I8bUVxkmuzHYxL2oTyHTUnmOBJTJLY6HGQ5BFm3p4D6FvnAisxcP7zCU4MoxiT5ig6qwbz7NvnGSXExx29IdY83cQxucR5IRiX6GdTNfXQjg27CyoZEqEZfV8HRoyf8EgtPd8hZSmoXyi9MmDAt2X3Embs4BzkKs13Q7XGLhX4rn-r-PJUCfDGNFjYzBADTdc6WX_f1KZEEslkiTweOUupnFwxU6RSWBGm7HuhPmb6izQCAxlKvdsHMOBkyjKaG36UmEHEaqZG1wdYIBhAvdBzMnaT78Fd6DdF6BkSJGHf0k5lecsrzyFCTLoZMX5QJAIuYGI14VlN9xG4WcobTiOOvmY-G0XEuxBzQj7N_3Z6y6y0jaJEt8WqAv0lnSDfzziYIDFClZCmod4BYg6LrKm44XFRgiHQ7kpFh9ilJy2zoakK6TBJ5gjKZVfxSbPsMvFftAj--E8C333yG0m5AWCsPXo6J-OEvfWIpsde2wPhlLSrcFdowwCcTysJQ5o4T0SDgk3Hg7rzmzvYeG-cfcYprhELRrNeFXiQc54d_Cr58XzmTGJ_p73pgaCyYcVVSUhKvsrDI2CIxrpX0uWulXqZgEKhfvG39ZzHiM_ZSt5CPtHVbQvK6IoOriuD",
+                "width": 5712
+            },
+            {
+                "height": 4032,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/113469402365158710660'>Daniela Garza</a>"
+                ],
+                "photo_reference": "AXQCQNQKHHXPn3p7PdQGYsT10dML6SSLQQF_PWcxaOpjL1gcV0obaCnZqM9fR0kXca1SeuNIB5HIBFoRHvzM_FBWhxRCVuIkkkxxq3khE_SJeD8_RaiFwh_KNLFI6SRD6Wa1rtqST599RYgm4X94pSj0qBWsScezznZNAb4CgwcxsDAmVJjczIKQnBwHw7BuPNPxJtpKkdRXNaaWgIqDh6hRPjf5T3gp3XijvbTcf1Quig78BN20I77VlwwngP9lmGdxA8W-EKs_y6WKRV8ASg9Jz7CZ2d1JrkoMn_vD5YjYjCP-2dperc935uYeB67PPpKKEEUr1aVvuD4M7klYKQ6jZJ-Bu6_WzJRb6eoCdIcT39CjiF35ABT3pE074fEbtUtClBZ12n7YniZtQlwQSUTbh0PLxDxQKpkbzG6JoS7gEP_B2oUhVdW5njOZoG2BzaY2H4zg1yj8sEKE-W4Esu5rMg7ui0SXxTRPbHJLIuO7vndBDMsAiOPUmE1Bv8vyZBUZxV5vOc0W5NInGJqS7H88752VxCSUO20FppmJMAvxj1QkckBD-DWiD5L6p3nCKiuFFDCPjNGyc-wP3An_7PW4gFXKekpmWuNMnIDK-d-rv130ZTInGbQ5wmu5_3HjFel9oPeeogUY",
+                "width": 3024
+            },
+            {
+                "height": 3024,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/108028673419700828980'>Marimar Franco Navarro</a>"
+                ],
+                "photo_reference": "AXQCQNSc3vw1bLL3mckVvf2DvBP5EilrbW3HXcQL51XsWbrPeXC1whQtgMPOXfwnm1mcDr3UKp3jR-Xy2UkrnBti4aw42qPIpxr05aOLn33WI0z1HN5hvR-r2zkjwHOVFRTmHXv9sBx7IRCG_gitflnq8pYdNFpeiZ3_awNL_WaBUrXD_BSLJIlDPtb21ShVeUQcVA0CHhp7USfObSNuFobuNh_RUBz7ypXurtrlA56yJe_ZBhjeeRvcnUFGmI3GQYIm6cTiDzKhQ6s7gOGdbbAQFiCHofIa2FnOOm90V6ajMK9pIayhAfBtmhUOtKySLBMpqtVVCzvLg3X65Tqng6l0QsPvZXj7jkMqGIqMvwQpvt9Vz40ck1Nls58Jd0ZQchoVHJ1bZTL1ub8p_UYBzg7Db8hH4WQpqZivtrXCEJEXo-Nsg7SN8ZmaJXCTZs_RGygiK3-HJ_sWkTpWBSTuXAXpzu6yjco2GsD2ruIs2L6aFCraVp5WhRD48eQ85HsLQG7AhtatKGSmhp-6-uH1XEAMevSnbsbLBRaP1A3QDIroaWOAdJ6Z2HgZANYYJjHII8MA-K2wLfwQu6tBoFMFWvNsCYCeELWy8MzfbiMUYEhkomYwm4ujTz9OLOe8QWFzcSQwE5plyg",
+                "width": 4032
+            },
+            {
+                "height": 7302,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/108442556753324786703'>Eddy</a>"
+                ],
+                "photo_reference": "AXQCQNT20M1xe7CCW3j_kgLIoEuGRj2ceYXb6ZNpgz5KMgLf8G03ICQe2045treNNERsSuzdU11OTuvUqP9MoFAv2seQeredfFJeArps3QdjoX5Nm5Qq5tBkpNwRTKlMX9IvtVojvetjOCKL6zxRm7YAnc84DMHraEI2R8Z57OejQgOUzxbPRxI8vAEePjv_cEOdY8Yr2C2GPDKY7EmEcUUe-BHe9NF0F4hpxWUUnMOcX6U6FAVQKpa_GokVm0NL0XvjXgQZHl-my6GvfSQ4qYLTuxuCr11RuQk5b7pRi2H66bwW_jgJDktS-tcbYVIUodI6CzFPnL8stlubLETbWtwAfcaEWB08gHm7KOStiUvV6QJlKl22r_4P78YpDiH7a1rL2GXggGCVeic8RrxXY0k4zWh23n5CuphzfKjCflKwiD-mVbWrMpT5CToLG34W5UrN1UGt_W3Of5fdtx2w6JovVKi5L9lqJWCJmayfymzkJ_d3xtWL5XrD-WpCkVK0IcUHq7mPcFsX937xeDz6hSoeqDybkYPpu0NQchGvm1TGF7ghN4KcbRG__RRreyr2wJr5dn8GPojJDNMgSlVD58HeEQzAHkNAeEaP-jpXPO6l6zxUk20bb1p_TEB5MS_b_RUwceuJTeJ4",
+                "width": 5842
+            },
+            {
+                "height": 6048,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/107385853017514820527'>Kent Wang</a>"
+                ],
+                "photo_reference": "AXQCQNTFoFOABW2cg-RjNShyiSIYWuTCrCrHCkrLIKKE77_CN4s94OxaFfsKLVRR0J7NlUBJY9X7JTDtWJOKY75w5qdZ6dpSB5HhoGO_7O7vdkIv3lIQm8B4r5ZC9o9l8ufFUqpT08WzJhBEsl4YbOnFAVFnWDHuXfsOvXR8sMm5nA_gefgNN2y5mNQsS3i-FMrSQZ36vfQ_lChVik5aOp7lZwu8B-sgTtxSYFzsHJdNZY05soT6D4ytYwEVvtnUjqAtjSu8gUM9yHdD3gDUa9Mud-WMZS8U9MA50pm-EcVXqGTq_DofC4VaH5RRNSH71ttssHl05NigYBVhRII-E4PVpTaeHfq8U9g7Ruk6lm1aVJ6RfT3bCgOnxIzSoRJfBzBS6DCyG3XAV0hB_fstte-VaatVtgq4MULhre1ubCjgtwF7fKOEyw-vxBmxnwqkN5rcrGxnklrT6QnY9IBVjNQKe4vTsmRjiOk9W42PtBDWifoBJDQGZJILvf6hDIxaGV18ERIBM_1RSHZ9sjy2o7vOienUALyjjlIjG41zlvwdVCM77rYBqzxN1wZWTzqMpM4G-GMMDUsCL1Be5Kgbtyucp3hRE3ODMyBtaI57L_H979GuyAVOaEMCmksOE2AmEbBmiW9YWw",
+                "width": 8064
+            },
+            {
+                "height": 3024,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/100055376843000208854'>Vivienne Dai Shi</a>"
+                ],
+                "photo_reference": "AXQCQNQgTDXsKopKDce4vaQfcsYHPu_dty_EFuIo7rz6ya6gUkbvZWxqR07CFHJF0ObJevFblmGxTcVpEjfHG_i-tHaAUoda3v9iTiLLGJmF5xWQJqRKltoFc83_YtkrvLpmmyTzDLcApGlkQx7XD2OGhs22T7aYhnSk98rOnKZDjpY9bjXnJ4xXYGw9EtQ4bzhJU-F5dj_opAxuIvQ7w4hRGfR5Lmzck2OmN0I5uJhQp0A6ULIwa3RG7qQJi2H5zAIRwt62cTinVqQKlxCuTGwPfs8rEA3WhiDJlQY2T_tP9tNhlkisyxu4i_sLKGEIW9bKhAvn4lOyH9R7JK7AWOY37b9LrptASK5Kg9fFP0QUjKvS42Mmc3cyvhkLitMOLYltPx-ew50GarrutE7WsUOm2KgPE-GXwt4vyUT3AI7bz-Sk8lrsPXlaTpEw1KLzRYEsVGIj_eJy_TjQVh-IS1LcLIlAoB_QIM12B3B2Mtc7KarRPXZCPXCXrBGTE_6xG1C4gyIp68JBm5jTuGrnRBVkFs7ITuQvFY7S3b8zk5ZFuVVjuIF2YRkb3PAS3iO4z86-tCF68TUHzIAl-1BCr30gtHoNrF7wb7JDFm4bGymvZ3wCKA1lDNLFa9rj5Buas3dT7Okqifrt",
+                "width": 4032
+            },
+            {
+                "height": 3024,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/101780916803673843753'>Daniel Jiménez Mora</a>"
+                ],
+                "photo_reference": "AXQCQNQdPmNynl5skF_5pyW4C5Mpkv5UnAUSYZZMYVuu_omqPMcxVdH__OeIrGv-Ei5lUt7nugXi8_VKRO6bZmlGo7qCicZc3P7RfJBI1b57gTUJP8Lk5Bh5rw5uqj4yrVZ8ef0A8fOGjg2VWG4mqFLJn1-wlD779TCWHzJKQnG1_gV_HnxIphn2XqvrBmziY2P-OX30HQn91CHzN_j4ikgeC-kqLGWeLLIJqhgNv-8Fw2S1NJF6UIhlxsPBLFgD8EexxDsXRpoewVUu5Me4qLov7DqarurUidAI7g_rr9YpMsuqm7JX_DqdAtAKM3xX2InFP8j7V4O9ZuuQU3qiNVmty3MHxhetswL7_hGHBklhLwDU0QqHSM3mo2mCAQzQDlAoyqhHF73nGgCrbwrt36Ji-jxvatMofDD2cHdMgAokFfmxGaQ-0rKDAbzsMnu_dnN_jRuOGgT-h66c8DHnYahXS8fWMnKqEsf0pCIFSdM7_uvFCTp4i_pjjDtRhy41VGlzxuz_Z3AYHQ6CgC-uripHgg48PICo35dvHC52xfAF1689fAUniShi_TGLZcuVdbkyfiFg0M7H67yJ2LE9YuX5Kf5GW23q_8S2ZMBLK4KfJKhtyxWGvttEaDycUi5BSNzHSS9yBw",
+                "width": 4032
+            },
+            {
+                "height": 3024,
+                "html_attributions": [
+                    "<a href='https: //maps.google.com/maps/contrib/110735504597281771440'>Juan Carlos Garcia</a>"
+                ],
+                "photo_reference": "AXQCQNS910LSz2bcmFD-PZZbS5Gt8DJx4394CmNjSUx5ahhZDkpK3E_EbrfdezXXY2ZPxneqKavuvpHXIhf_ZiUsUR30DprmRUiH7ReWJQcL7_jeDZlB1EIdE0zoSnZZ7pdObyHtuzj9hLHJ2QKciBroDpsd-eAhVYh1TDiBGSGSqg9-G4_lmmQLi6lJfJ9kznJDhCfHJd43xvc1Ro8L7J9PVa_9YBqqoHtsbN9Kd0Ca-NCeDDc4Zgdq5OMs9hLWOHuk3GK_9-phqEXesp-LElPAOgzCPmOSwuW7HLT3KXEy9CZsyCZcXB5i2Kfm2tM-qCWvJERCi4jPqwCGZailD-p6Mxvsku8eccMtzfaGgtx-a2_U6v73A1lnN1OFpRMkK31IXhE0Bp7g9MdfYiFKlZMtxqflG4uuHjcHAuuQB6aj8XMt7admPzanQqkNYsR0BJQjUWGEv5WhuTghB3TVEJUe81GkL1tgJvue-r_HQ_chnF5BOZOP9N1jm4eP773fLExjSddMX4oczlzGMyNuOFdzHMWRiZHxkzqC_yGJbhtBmoSms2ks-UDJtm0WbypYi_DTNBq1znW9HY5OcYJVRp81MKe3IdxTbejCrLHYyIJVdFEftQS_3qaGSnR2q5SjFexTp-iyBA",
+                "width": 4032
+            }
+        ],
+        "place_id": "ChIJSTemK5CipBIRNV6PIhXQ3bk",
+        "plus_code": {
+            "compound_code": "95R4+GW Barcelona, Spain",
+            "global_code": "8FH495R4+GW"
+        },
+        "price_level": 3,
+        "rating": 4.1,
+        "reservable": True,
+        "reviews": [
+            {
+                "author_name": "P N",
+                "author_url": "https://www.google.com/maps/contrib/106988452467697822002/reviews",
+                "language": "en",
+                "original_language": "en",
+                "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWH-5Ua1AlHYrNZ6nnKuuECTkGKDIg17J1XeBCRg8sYD0kVN-M9=s128-c0x00000000-cc-rp-mo-ba2",
+                "rating": 2,
+                "relative_time_description": "a week ago",
+                "text": "This was my second time visiting this restaurant, which I once considered one of the most impressive and memorable restaurants in Barcelona! So, I specifically planned my Barcelona trip and immediately booked it for my last night. But the result was very disappointing, and I may have to adjust my ranking of it.\n\nFirstly, the familiar waiters have all left, and the newly hired staff generally seem emotionless and wear fake smiles. When I tried to order in stages to ensure the food was enjoyed at its best quality, I received an indifferent reaction from the waiter, just a fake smile.\n\nMoreover, my assigned seating was a two-person table by the roadside. Under normal circumstances, the earliest seated customers should get the corner location, but I was just given a seat on the very edge, and the chair was broken. I couldn"t imagine a Michelin-recommended restaurant having this kind of service and experience.\n\nThe food selection wasn"t as extensive as before, and while many dishes were surprisingly delicious the first time I ate here, this time they were just okay. Furthermore, the waiters kept urging me to order, and even specifically reminded me that the dining time was only two hours, giving me the feeling that they wanted me to eat and get out quickly.\n\nThe appetizers were good, with fresh ingredients. The preserved mackerel was very tasty, but I preferred last year"s version, which had toast underneath for a better texture. The only redeeming thing was that their quail was really delicious, with excellent seasoning and perfect cooking, and the charcoal grilling flavor was outstanding. This dish is the only reason I would come back.\n\nAlthough many people generally think the price is relatively expensive, considering they use charcoal grilling, which requires time and effort to prepare, I think the price is reasonable, but the portion sizes are a little small.\n\nIf this restaurant is no longer part of the Michelin selection in the future, I wouldn"t be surprised. After reading other diners" reviews and reactions, coupled with my own experience this time, it"s truly disappointing",
+                "time": 1746370321,
+                "translated": False
+            },
+            {
+                "author_name": "Aline Martins",
+                "author_url": "https://www.google.com/maps/contrib/109442060156435839336/reviews",
+                "language": "es",
+                "original_language": "es",
+                "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWoVrFtCNlW39zm-xffBoVExVG7e1zvqQppxmN9OYs3Tkp6tywW=s128-c0x00000000-cc-rp-mo-ba2",
+                "rating": 5,
+                "relative_time_description": "a week ago",
+                "text": "Es caro, pero vale la pena. La carne y la torrija son surrealistas de buenas.",
+                "time": 1746351501,
+                "translated": False
+            },
+            {
+                "author_name": "Vicki malkoun",
+                "author_url": "https://www.google.com/maps/contrib/117912914407782404349/reviews",
+                "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocIzqn1ohD9sDWmpgzSh5gcXoc_7Dx_fmr1arjs6KUQt-sL_qg=s128-c0x00000000-cc-rp-mo",
+                "rating": 4,
+                "relative_time_description": "a week ago",
+                "text": "",
+                "time": 1746318886,
+                "translated": False
+            },
+            {
+                "author_name": "Mercè Busquet",
+                "author_url": "https://www.google.com/maps/contrib/116437801778739254075/reviews",
+                "language": "ca",
+                "original_language": "ca",
+                "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjXIoQ8igTo2FqE_npPTValPn1Ib8gUn3HacKKNSpVjBIWYmR70o=s128-c0x00000000-cc-rp-mo-ba2",
+                "rating": 4,
+                "relative_time_description": "a week ago",
+                "text": "Cuina excelent, proposta original i diferent, potser les racions una mica petites per el preu. Ens han aconsellat molt bé amb els vins, de petits cellers però exelents, super bona la torrija de postre.",
+                "time": 1746302933,
+                "translated": False
+            },
+            {
+                "author_name": "Sara Perissinotto",
+                "author_url": "https://www.google.com/maps/contrib/105975360795197003065/reviews",
+                "language": "es",
+                "original_language": "es",
+                "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWstiGjzZkbLmCQGAHzJ9OmvhWl-inD1Dh3rhFcMtM0rqFmMV0=s128-c0x00000000-cc-rp-mo-ba3",
+                "rating": 4,
+                "relative_time_description": "a week ago",
+                "text": "Deliciosa comida! Recomiendo las mollejas, el chuleton y el bikini!",
+                "time": 1746118045,
+                "translated": False
+            }
+        ],
+        "serves_beer": True,
+        "serves_breakfast": False,
+        "serves_brunch": False,
+        "serves_dinner": True,
+        "serves_lunch": True,
+        "serves_vegetarian_food": False,
+        "serves_wine": True,
+        "takeout": False,
+        "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+        ],
+        "url": "https://maps.google.com/?cid=13393089656062434869",
+        "user_ratings_total": 1920,
+        "utc_offset": 120,
+        "vicinity": "Carrer de Provença, 230, Barcelona",
+        "website": "https://www.gresca.rest/reserves",
+        "wheelchair_accessible_entrance": True
+    },
+    "status": "OK"
+}

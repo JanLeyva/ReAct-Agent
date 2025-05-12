@@ -5,10 +5,16 @@ build/
 dist/
 wheels/
 *.egg-info
-.ruff_cache
+
 # Virtual environments
 .venv
+# 
+.env
+.ruff*
+uv.lock
 
+# docker-compose volumes: qdrant/storag
+docker-compose/qdrant_data
 # enviorament files
 credentials.env
 
