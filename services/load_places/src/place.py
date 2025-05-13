@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import BaseModel
 
+
 class Place(BaseModel):
     """
     A place from Google Maps API.
@@ -37,10 +38,7 @@ class Place(BaseModel):
     takeout: bool | None
 
     @classmethod
-    def from_googlemaps_api_response(
-        cls,
-        response
-    ) -> 'Place':
+    def from_googlemaps_api_response(cls, response) -> "Place":
         """
         Returns a Place object from the Google Maps REST API response.
 
@@ -70,7 +68,9 @@ class Place(BaseModel):
             delivery=result.get("delivery", None),
             dine_in=result.get("dine_in", None),
             user_ratings_total=result.get("user_ratings_total", None),
-            wheelchair_accessible_entrance=result.get("wheelchair_accessible_entrance", None),
+            wheelchair_accessible_entrance=result.get(
+                "wheelchair_accessible_entrance", None
+            ),
             serves_beer=result.get("serves_beer", None),
             serves_wine=result.get("serves_wine", None),
             serves_breakfast=result.get("serves_breakfast", None),
@@ -80,7 +80,6 @@ class Place(BaseModel):
             serves_vegetarian_food=result.get("serves_vegetarian_food", None),
             takeout=result.get("takeout", None),
         )
-        
 
     @staticmethod
     def get_coordinates(result: dict) -> list:
@@ -88,20 +87,20 @@ class Place(BaseModel):
         geometry = result.get("geometry", None)
         if geometry:
             location = geometry.get("location", "")
-            return [location['lat'], location['lng']]
+            return [location["lat"], location["lng"]]
         raise ValueError(f"No coordinates for {result['name']}")
-    
+
     @staticmethod
     def get_summary(result: dict) -> dict | None:
         return result.get("editorial_summary", None)
-    
+
     @staticmethod
     def get_overview(result: dict) -> str | None:
         summary = Place.get_summary(result)
         if summary:
             return summary.get("overview", None)
         return None
-    
+
     @staticmethod
     def get_language(result: dict) -> str | None:
         summary = Place.get_summary(result)
@@ -112,21 +111,21 @@ class Place(BaseModel):
     @staticmethod
     def get_open_hours(result: dict) -> dict | None:
         return result.get("current_opening_hours", None)
-    
+
     @staticmethod
     def get_current_opening_hours(result: dict) -> bool:
         open_hours = Place.get_open_hours(result)
         if open_hours:
             return open_hours.get("open_now", None)
         return None
-    
+
     @staticmethod
     def get_weekday_text(result: dict) -> str | None:
         open_hours = Place.get_open_hours(result)
         if open_hours:
             return open_hours.get("weekday_text", None)
         return None
-    
+
     def to_str(self) -> str:
         # pydantic method to convert the model to a dict
         return self.model_dump_json()
@@ -135,10 +134,7 @@ class Place(BaseModel):
         return self.model_dump()
 
 
-        
 class PlaceID(BaseModel):
     name: str | None
     id: str | None
     business_status: str | None
-
-

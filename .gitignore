@@ -12,7 +12,8 @@ wheels/
 .env
 .ruff*
 uv.lock
-
+# mac OS store file
+*.DS_Store
 # docker-compose volumes: qdrant/storag
 docker-compose/qdrant_data
 # enviorament files
