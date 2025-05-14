@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
-        with:
-          args: --check .
-          fix_args: --fix .
+      - run: ruff check --fix
+      - run: ruff format
+      
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'style fixes by ruff'
