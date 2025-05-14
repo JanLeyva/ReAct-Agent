@@ -1,12 +1,6 @@
-name: Linter formatting check and fix with ruff
-on:
-  push:
-    branches:
-      - main
+name: ruff-linter-formatting
+on: [ push, pull_request ]
 
-  pull_request:
-    branches:
-      - main
 
 jobs:
   ruff:
@@ -16,7 +10,7 @@ jobs:
       - uses: astral-sh/ruff-action@v3
       - run: ruff check --fix
       - run: ruff format
-      
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      # Commit all changed files back to the repository
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'style fixes by ruff'
