@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from config import config
@@ -10,8 +11,7 @@ from loguru import logger
 
 
 class GoogleMapsAPI(PlacesAPI):
-    def __init__(self, places_names: list, gmaps_client: googlemaps.Client):
-        self.places_names = places_names
+    def __init__(self, gmaps_client: googlemaps.Client):
         self.gmaps_client = gmaps_client
         self.fields_place = [
             "place_id",
@@ -41,14 +41,17 @@ class GoogleMapsAPI(PlacesAPI):
             "serves_dinner",
             "serves_vegetarian_food",
             "takeout",
-            # "reviews"
+            "reviews"
         ]
 
-    def get_places(self) -> list[Place]:
+    def get_places_by_name(self, places_names: list) -> list[Place]:
         # get all places id from place name
-        places_id = [self.get_place_id(place_name) for place_name in self.places_names]
+        places_id = [self.get_place_id(place_name) for place_name in places_names]
         logger.info(f"places ID: {places_id}")
 
+        return self.get_places_by_id(places_id)
+    
+    def get_places_by_id(self, places_id: list[PlaceID]) -> list[Place]:
         # get place info - filter None values
         places = [self.get_place_info(id) for id in places_id if id is not None]
         logger.info(f"places FULL info: {places}")
@@ -82,6 +85,9 @@ class GoogleMapsAPI(PlacesAPI):
             reviews_no_translations=True,
             reviews_sort="newest",
         )
+        
+        with open("place_info.json", "w") as f:
+            json.dump(place_info, f)
 
         return Place.from_googlemaps_api_response(place_info)
 
@@ -100,8 +106,20 @@ if __name__ == "__main__":
     )
     places_names = hi_vull_anar.select(pl.col("Títol")).to_series().to_list()
 
-    gmaps_api = GoogleMapsAPI(places_names, gmaps_client)
-    places = gmaps_api.get_places()
-    pl.DataFrame(places).write_parquet(
-        f"{datetime.now().strftime("%Y%m%d")}_restaurants.parquet"
-    )
+    gmaps_api = GoogleMapsAPI(gmaps_client)
+    # places = gmaps_api.get_places_by_name(places_names)
+    # asd = gmaps_api.get_place_info(PlaceID(name="test",
+    #                                         id="ChIJSTemK5CipBIRNV6PIhXQ3bk",
+    #                                         business_status="fake"))
+    places_id = pl.read_excel("/Users/esengineer/Documents/_dev/whatsapp-agent/services/load_places/data_filter.xlsx")
+    places_id = [PlaceID(name="fake",
+            id=id,
+            business_status="fake") for id in places_id["place_id"].to_list()]
+    logger.info(places_id)
+    places = gmaps_api.get_places_by_id(places_id)
+    
+
+    breakpoint()
+    # pl.DataFrame(places).write_parquet(
+    #     f"{datetime.now().strftime("%Y%m%d")}_restaurants.parquet"
+    # )

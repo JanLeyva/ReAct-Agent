@@ -22,7 +22,7 @@ class Place(BaseModel):
     geometry: list[float] | None
     price_level: int | None
     rating: float | None
-    type: list[str] | None
+    types: list[str] | None
     reservable: bool | None
     delivery: bool | None
     dine_in: bool | None
@@ -36,6 +36,7 @@ class Place(BaseModel):
     serves_dinner: bool | None
     serves_vegetarian_food: bool | None
     takeout: bool | None
+    reviews: list | None
 
     @classmethod
     def from_googlemaps_api_response(cls, response) -> "Place":
@@ -63,7 +64,7 @@ class Place(BaseModel):
             geometry=cls.get_coordinates(result),
             price_level=result.get("price_level", None),
             rating=result.get("rating", None),
-            type=result.get("type", None),
+            types=result.get("types", None),
             reservable=result.get("reservable", None),
             delivery=result.get("delivery", None),
             dine_in=result.get("dine_in", None),
@@ -79,6 +80,7 @@ class Place(BaseModel):
             serves_dinner=result.get("serves_dinner", None),
             serves_vegetarian_food=result.get("serves_vegetarian_food", None),
             takeout=result.get("takeout", None),
+            reviews=cls.get_reviews(result),
         )
 
     @staticmethod
@@ -124,6 +126,13 @@ class Place(BaseModel):
         open_hours = Place.get_open_hours(result)
         if open_hours:
             return open_hours.get("weekday_text", None)
+        return None
+    
+    @staticmethod
+    def get_reviews(result: dict) -> list | None:
+        reviews = result.get("reviews", None)
+        if reviews:
+            return [review.get("text", None) for review in reviews if review.get("text", None)]
         return None
 
     def to_str(self) -> str:
