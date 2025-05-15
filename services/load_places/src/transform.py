@@ -13,6 +13,7 @@ data = data.filter(data["formatted_address"].str.contains("Barcelona"))
 # Keep just restaurants
 data = data.filter(pl.col("types").list.contains("restaurant"))
 
+
 def parse_time_range(time_str: str):
     # clean
     time_str = time_str.replace("\u2009", "")
@@ -49,4 +50,3 @@ for weekday in data.select(pl.col("weekday_text")).iter_rows():
         time_week.append(None)
 
 data.insert_column(29, pl.Series("time_week", time_week, strict=False))
-

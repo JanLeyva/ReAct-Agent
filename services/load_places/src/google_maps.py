@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from config import config
 from base import PlacesAPI
@@ -41,7 +40,7 @@ class GoogleMapsAPI(PlacesAPI):
             "serves_dinner",
             "serves_vegetarian_food",
             "takeout",
-            "reviews"
+            "reviews",
         ]
 
     def get_places_by_name(self, places_names: list) -> list[Place]:
@@ -50,7 +49,7 @@ class GoogleMapsAPI(PlacesAPI):
         logger.info(f"places ID: {places_id}")
 
         return self.get_places_by_id(places_id)
-    
+
     def get_places_by_id(self, places_id: list[PlaceID]) -> list[Place]:
         # get place info - filter None values
         places = [self.get_place_info(id) for id in places_id if id is not None]
@@ -85,7 +84,7 @@ class GoogleMapsAPI(PlacesAPI):
             reviews_no_translations=True,
             reviews_sort="newest",
         )
-        
+
         with open("place_info.json", "w") as f:
             json.dump(place_info, f)
 
@@ -111,13 +110,15 @@ if __name__ == "__main__":
     # asd = gmaps_api.get_place_info(PlaceID(name="test",
     #                                         id="ChIJSTemK5CipBIRNV6PIhXQ3bk",
     #                                         business_status="fake"))
-    places_id = pl.read_excel("/Users/esengineer/Documents/_dev/whatsapp-agent/services/load_places/data_filter.xlsx")
-    places_id = [PlaceID(name="fake",
-            id=id,
-            business_status="fake") for id in places_id["place_id"].to_list()]
+    places_id = pl.read_excel(
+        "/Users/esengineer/Documents/_dev/whatsapp-agent/services/load_places/data_filter.xlsx"
+    )
+    places_id = [
+        PlaceID(name="fake", id=id, business_status="fake")
+        for id in places_id["place_id"].to_list()
+    ]
     logger.info(places_id)
     places = gmaps_api.get_places_by_id(places_id)
-    
 
     breakpoint()
     # pl.DataFrame(places).write_parquet(

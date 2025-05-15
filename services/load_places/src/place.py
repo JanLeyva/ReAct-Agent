@@ -127,12 +127,16 @@ class Place(BaseModel):
         if open_hours:
             return open_hours.get("weekday_text", None)
         return None
-    
+
     @staticmethod
     def get_reviews(result: dict) -> list | None:
         reviews = result.get("reviews", None)
         if reviews:
-            return [review.get("text", None) for review in reviews if review.get("text", None)]
+            return [
+                review.get("text", None)
+                for review in reviews
+                if review.get("text", None)
+            ]
         return None
 
     def to_str(self) -> str:
