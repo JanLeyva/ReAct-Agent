@@ -85,14 +85,7 @@ class GoogleMapsAPI(PlacesAPI):
             reviews_sort="newest",
         )
 
-        with open("place_info.json", "w") as f:
-            json.dump(place_info, f)
-
         return Place.from_googlemaps_api_response(place_info)
-
-    def get_places_dataframe(self) -> pl.DataFrame:
-        """Transform whole List[Place] object to polars DataFrame"""
-        return pl.DataFrame(self.get_places())
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "crawl4ai>=0.6.3",
     "fastexcel>=0.14.0",
     "googlemaps>=4.10.0",
     "loguru>=0.7.3",
