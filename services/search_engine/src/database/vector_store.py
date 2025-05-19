@@ -7,7 +7,7 @@ import cohere
 import pandas as pd
 import psycopg
 from services.search_engine.src.config import config
-from openai import OpenAI
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from timescale_vector import client
 
 
@@ -17,8 +17,13 @@ class VectorStore:
     def __init__(self):
         """Initialize the VectorStore with settings, OpenAI client, and Timescale Vector client."""
         self.settings = config
-        self.openai_client = OpenAI(api_key=self.settings.openai_api_key)
-        self.embedding_model = self.settings.openai_embedding_model
+        self.gclient_client = (
+            GoogleGenAIEmbedding(
+                model_name="text-embedding-004",
+                embed_batch_size=100,
+                api_key=config.api_key_google_genai,
+            ),
+        )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
         self.vector_settings = self.settings_vector_store
         self.vec_client = client.Sync(
@@ -56,14 +61,7 @@ class VectorStore:
         """
         text = text.replace("\n", " ")
         start_time = time.time()
-        embedding = (
-            self.openai_client.embeddings.create(
-                input=[text],
-                model=self.embedding_model,
-            )
-            .data[0]
-            .embedding
-        )
+        embedding = self.gclient_client.get_text_embedding(text)
         elapsed_time = time.time() - start_time
         logger.info(f"Embedding generated in {elapsed_time:.3f} seconds")
         return embedding
