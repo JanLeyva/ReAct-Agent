@@ -5,8 +5,6 @@ on: [ push, pull_request ]
 jobs:
   ruff:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
