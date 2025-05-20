@@ -18,16 +18,18 @@ class VectorStore:
         """Initialize the VectorStore with settings, OpenAI client, and Timescale Vector client."""
         self.settings = config
         self.gclient_client = GoogleGenAIEmbedding(
-                model_name="text-embedding-004",
-                embed_batch_size=100,
-                api_key=config.api_key_google_genai,
-            )
+            model_name="text-embedding-004",
+            embed_batch_size=100,
+            api_key=config.api_key_google_genai,
+        )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
         self.vec_client = client.Sync(
             self.settings.database_service_url,
             self.settings.table_name,
             self.settings.embedding_dimensions,
-            time_partition_interval=timedelta(days=self.settings.time_partition_interval),
+            time_partition_interval=timedelta(
+                days=self.settings.time_partition_interval
+            ),
         )
 
     def create_keyword_search_index(self):
@@ -85,9 +87,7 @@ class VectorStore:
         """
         records = df.to_records(index=False)
         self.vec_client.upsert(list(records))
-        logger.info(
-            f"Inserted {len(df)} records into {self.settings.table_name}"
-        )
+        logger.info(f"Inserted {len(df)} records into {self.settings.table_name}")
 
     def semantic_search(
         self,

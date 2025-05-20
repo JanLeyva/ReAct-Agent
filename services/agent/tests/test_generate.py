@@ -1,9 +1,11 @@
 # internal libs
 from api import app
+
 # 3rd party
 from fastapi.testclient import TestClient
 
 client = TestClient(app)
+
 
 def test_telegram_post():
     # Prepare the headers

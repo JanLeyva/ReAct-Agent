@@ -11,4 +11,3 @@ def test_returns_200_ok():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "OK"}
-

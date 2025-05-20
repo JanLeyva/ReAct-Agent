@@ -19,12 +19,15 @@ class TelegramMsg(BaseModel):
     message: str
     chat_id: int
 
+
 class SearchEngineQuery(BaseModel):
     query: str
+
 
 class SearchEngineQueryCoord(SearchEngineQuery):
     long: float
     lat: float
+
 
 @app.get("/")
 def health():
@@ -54,13 +57,13 @@ def get_agent_response(request: TelegramMsg):
 @app.get("/search/query/")
 def get_restaurants_from_query(query: SearchEngineQuery):
     # TODO implement search engine
-    return {"response": {}}
+    return {"response": {"response": "OK"}}
 
 
 @app.get("/search/query_coordinates/")
-def get_restaurants_from_query(query: SearchEngineQueryCoord):
+def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     # TODO implement search engine - w coordinates
-    return {"response": {}}
+    return {"response": {"response": "OK"}}
 
 
 if __name__ == "__main__":

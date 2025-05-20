@@ -1,12 +1,16 @@
 from datetime import datetime
+
 # internal lib
 from src.database.vector_store import VectorStore
+
 # 3rd party
 import pandas as pd
+from loguru import logger
 from timescale_vector.client import Predicates, uuid_from_time
 
 # Initialize VectorStore
 vec = VectorStore()
+
 
 def prepare_record(row):
     """Prepare a record for insertion into the vector store.
@@ -42,10 +46,12 @@ def prepare_record(row):
                     "reservable": row["reservable"],
                     "delivery": row["delivery"],
                     "dine_in": row["dine_in"],
-                    "wheelchair_accessible_entrance": row["wheelchair_accessible_entrance"],
+                    "wheelchair_accessible_entrance": row[
+                        "wheelchair_accessible_entrance"
+                    ],
                     "serves_breakfast": row["serves_breakfast"],
                     "serves_brunch": row["serves_brunch"],
-                    "takeout": row["takeout"]
+                    "takeout": row["takeout"],
                 },
                 "contents": content,
                 "embedding": embedding,
@@ -53,9 +59,12 @@ def prepare_record(row):
         )
     return None
 
+
 def main():
     # read data
-    data = pd.read_parquet("/Users/esengineer/Documents/_dev/whatsapp-agent/docs/data/filtered_data.parquet")
+    data = pd.read_parquet(
+        "/Users/esengineer/Documents/_dev/whatsapp-agent/docs/data/filtered_data.parquet"
+    )
     data = data[~data["overview"].isnull()][:5].reset_index(drop=True)
     # create vector df
     records = data.apply(prepare_record, axis=1)
@@ -65,9 +74,11 @@ def main():
     vec.upsert(records)
     breakpoint()
     # Search - example
-    metadata_filter = Predicates(Predicates(("lat", "<=", 3.2)),
-                                Predicates(("long", ">=", 2.1)))
+    metadata_filter = Predicates(
+        Predicates(("lat", "<=", 3.2)), Predicates(("long", ">=", 2.1))
+    )
     results = vec.semantic_search("burguers", predicates=metadata_filter)
+    logger.info(results)
 
 
 if __name__ == "__main__":
