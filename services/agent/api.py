@@ -19,6 +19,12 @@ class TelegramMsg(BaseModel):
     message: str
     chat_id: int
 
+class SearchEngineQuery(BaseModel):
+    query: str
+
+class SearchEngineQueryCoord(SearchEngineQuery):
+    long: float
+    lat: float
 
 @app.get("/")
 def health():
@@ -32,7 +38,7 @@ async def main(message: str) -> str:
     return response["response"]
 
 
-@app.post("/telegram/")
+@app.post("/generate/")
 def get_agent_response(request: TelegramMsg):
     logger.info(f"message: {request.message}")
     message = asyncio.run(main(request.message))
@@ -43,6 +49,18 @@ def get_agent_response(request: TelegramMsg):
         "chat_id": request.chat_id,
         "timestamp": time(),
     }
+
+
+@app.get("/search/query/")
+def get_restaurants_from_query(query: SearchEngineQuery):
+    # TODO implement search engine
+    return {"response": {}}
+
+
+@app.get("/search/query_coordinates/")
+def get_restaurants_from_query(query: SearchEngineQueryCoord):
+    # TODO implement search engine - w coordinates
+    return {"response": {}}
 
 
 if __name__ == "__main__":

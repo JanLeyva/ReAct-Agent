@@ -19,7 +19,7 @@ def send_request_msg(message: str, chat_id: int) -> str:
     """
     # request to Agent API
     # Define the URL endpoint
-    url = f"{os.environ['ELB_ENDPOINT']}/telegram/"
+    url = f"{os.environ['ELB_ENDPOINT']}/generate/"
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
