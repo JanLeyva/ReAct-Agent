@@ -1,4 +1,3 @@
-
 from config import config
 from base import PlacesAPI
 from place import Place, PlaceID
