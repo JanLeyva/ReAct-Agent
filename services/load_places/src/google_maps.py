@@ -1,4 +1,3 @@
-import json
 
 from config import config
 from base import PlacesAPI
