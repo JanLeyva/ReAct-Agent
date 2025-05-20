@@ -1,12 +1,12 @@
 from loguru import logger
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, List, Optional, Tuple, Union
 
 import cohere
 import pandas as pd
 import psycopg
-from services.search_engine.src.config import config
+from src.config import config
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from timescale_vector import client
 
@@ -17,31 +17,28 @@ class VectorStore:
     def __init__(self):
         """Initialize the VectorStore with settings, OpenAI client, and Timescale Vector client."""
         self.settings = config
-        self.gclient_client = (
-            GoogleGenAIEmbedding(
+        self.gclient_client = GoogleGenAIEmbedding(
                 model_name="text-embedding-004",
                 embed_batch_size=100,
                 api_key=config.api_key_google_genai,
-            ),
-        )
+            )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
-        self.vector_settings = self.settings_vector_store
         self.vec_client = client.Sync(
             self.settings.database_service_url,
-            self.vector_settings_table_name,
-            self.vector_settings_embedding_dimensions,
-            time_partition_interval=self.vector_settings_time_partition_interval,
+            self.settings.table_name,
+            self.settings.embedding_dimensions,
+            time_partition_interval=timedelta(days=self.settings.time_partition_interval),
         )
 
     def create_keyword_search_index(self):
         """Create a GIN index for keyword search if it doesn't exist."""
-        index_name = f"idx_{self.vector_settings.table_name}_contents_gin"
+        index_name = f"idx_{self.settings.table_name}_contents_gin"
         create_index_sql = f"""
         CREATE INDEX IF NOT EXISTS {index_name}
-        ON {self.vector_settings.table_name} USING gin(to_tsvector('english', contents));
+        ON {self.settings.table_name} USING gin(to_tsvector('english', contents));
         """
         try:
-            with psycopg.connect(self.settings.database.service_url) as conn:
+            with psycopg.connect(self.settings.database_service_url) as conn:
                 with conn.cursor() as cur:
                     cur.execute(create_index_sql)
                     conn.commit()
@@ -89,7 +86,7 @@ class VectorStore:
         records = df.to_records(index=False)
         self.vec_client.upsert(list(records))
         logger.info(
-            f"Inserted {len(df)} records into {self.vector_settings.table_name}"
+            f"Inserted {len(df)} records into {self.settings.table_name}"
         )
 
     def semantic_search(
@@ -165,8 +162,7 @@ class VectorStore:
 
         if return_dataframe:
             return self._create_dataframe_from_results(results)
-        else:
-            return results
+        return results
 
     def _create_dataframe_from_results(
         self,
@@ -270,7 +266,7 @@ class VectorStore:
         """
         search_sql = f"""
         SELECT id, contents, ts_rank_cd(to_tsvector('english', contents), query) as rank
-        FROM {self.vector_settings.table_name}, websearch_to_tsquery('english', %s) query
+        FROM {self.settings.table_name}, websearch_to_tsquery('english', %s) query
         WHERE to_tsvector('english', contents) @@ query
         ORDER BY rank DESC
         LIMIT %s
@@ -279,7 +275,7 @@ class VectorStore:
         start_time = time.time()
 
         # Create a new connection using psycopg3
-        with psycopg.connect(self.settings.database.service_url) as conn:
+        with psycopg.connect(self.settings.database_service_url) as conn:
             with conn.cursor() as cur:
                 cur.execute(search_sql, (query, limit))
                 results = cur.fetchall()
