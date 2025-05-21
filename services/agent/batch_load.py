@@ -1,7 +1,7 @@
-
 from src.config import config
 from src.services.load_restaurants.place import GooglePlaceID, Place
 from src.services.load_restaurants.transform import GoogleMapsAPI
+
 # 3rd party
 import googlemaps
 import polars as pl
