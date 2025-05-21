@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "crawl4ai>=0.6.3",
     "fastapi>=0.115.12",
     "googlemaps>=4.10.0",
     "httpx>=0.28.1",
@@ -15,8 +16,11 @@ dependencies = [
     "llama-index-utils-workflow>=0.3.1",
     "llama-index-vector-stores-qdrant>=0.6.0",
     "loguru>=0.7.3",
+    "mypy>=1.15.0",
     "numpy==1.26",
     "opik>=1.7.11",
+    "playwright>=1.52.0",
+    "polars>=1.30.0",
     "pre-commit>=4.2.0",
     "pydantic-settings>=2.8.1",
     "pytest>=8.3.5",

@@ -25,3 +25,9 @@ with (Path(__file__).parents[0] / Path("router_template.md")).open("r") as f:
 
 with (Path(__file__).parents[0] / Path("answer_template.md")).open("r") as f:
     ANSWER_PROMPT = f.read()
+
+with (Path(__file__).parents[0] / Path("clean_web_text.md")).open("r") as f:
+    CLEAN_WEB_TEXT = f.read()
+
+with (Path(__file__).parents[0] / Path("summary_review.md")).open("r") as f:
+    SUMMARY_REVIEW = f.read()

@@ -13,10 +13,16 @@ class Config(BaseSettings):
     api_key_google_maps: Optional[str]
     api_key_opik: Optional[str]
     api_key_google_genai: Optional[str]
+    googlemaps_api_key: str
     opik_workspace: Optional[str]
     opik_project_name: Optional[str]
     model_provider: Literal["groq", "openai"]
     model_name: Literal["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gpt-4o-min"]
+    database_service_url: str
+    cohere_api_key: str
+    table_name: str
+    embedding_dimensions: int
+    time_partition_interval: int
 
 
 config = Config()

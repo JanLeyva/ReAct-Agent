@@ -1,0 +1,35 @@
+
+from src.config import config
+from src.services.load_restaurants.place import GooglePlaceID, Place
+from src.services.load_restaurants.transform import GoogleMapsAPI
+# 3rd party
+import googlemaps
+import polars as pl
+from loguru import logger
+
+
+if __name__ == "__main__":
+    # Google Maps Client
+    gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
+    gmaps_api = GoogleMapsAPI(gmaps_client)
+
+    # Places from my persnal list - Uncomment below in case GET places from NAME
+    # hi_vull_anar = pl.read_csv(
+    #     "data/Hi vull anar.csv", separator=","
+    # )
+    # places_names = hi_vull_anar.select(pl.col("Títol")).to_series().to_list()
+
+    places_id = pl.read_parquet(
+        "/Users/esengineer/Documents/_dev/whatsapp-agent/docs/data/filtered_data.parquet"
+    )
+
+    places_id = [
+        GooglePlaceID(name="fake", id=id, business_status="fake")
+        for id in places_id["place_id"].to_list()
+    ]
+    logger.info(places_id[0])
+    # places = gmaps_api.get_places_by_id(places_id)
+    place = gmaps_api.get_place_info(places_id[0])
+    complet_place = Place.get_place(place)
+    logger.info(complet_place)
+    breakpoint()

@@ -37,7 +37,6 @@ class BaseLLM(ABC):
 # Concrete LLM implementations
 class GroqLlama370b(BaseLLM):
     def __init__(self):
-        super().__init__()
         self.llm = Groq(model=ModelName.LLAMA3_70B, api_key=config.groq_api_key)
 
     def model(self) -> Groq:
