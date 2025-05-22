@@ -191,6 +191,7 @@ class VectorStore:
         Returns:
             Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
         """
+        # TODO: implement coordinates filtering <- square?
         metadata_filter = Predicates(
             Predicates(("long", ">=", long)), Predicates(("lat", "<=", lat))
         )
