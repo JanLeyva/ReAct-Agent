@@ -1,6 +1,7 @@
 # internal lib
-from services.agent.src.services.load_restaurants.upload_place import UploadPlace
+from src.services.load_restaurants.upload_place import UploadPlace
 from src.services.agent.react_agent import ReActAgent
+from src.services.search_engine.vector_store import VectorStore
 from src.llm.factory import llm
 from src.services.agent.tools import tools
 
@@ -57,14 +58,18 @@ def get_agent_response(request: TelegramMsg):
 
 @app.get("/search/query/")
 def get_restaurants_from_query(query: SearchEngineQuery):
-    # TODO implement search engine
-    return {"message": "OK"}
+    """Search restaurant from query"""
+    results = VectorStore.semantic_search(query.query)
+    return {"message": "OK", "results": results}
 
 
 @app.get("/search/query_coordinates/")
 def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
-    # TODO implement search engine - w coordinates
-    return {"message": "OK"}
+    """Search restaurant from query and coordinates"""
+    results = VectorStore.semantic_search_with_filter(
+        query.query, query.long, query.lat
+    )
+    return {"message": "OK", "results": results}
 
 
 @app.post("/upload/restaurant/{place_name}")

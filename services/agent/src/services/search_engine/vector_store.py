@@ -97,7 +97,8 @@ class VectorStore:
         metadata_filter: Union[dict, List[dict]] = None,
         predicates: Optional[client.Predicates] = None,
         time_range: Optional[Tuple[datetime, datetime]] = None,
-        return_dataframe: bool = True,
+        formatted: bool = True,
+        return_dataframe: bool = False,
     ) -> Union[List[Tuple[Any, ...]], pd.DataFrame]:
         """
         Query the vector database for similar embeddings based on input text.
@@ -116,9 +117,10 @@ class VectorStore:
                 - | is used to combine multiple predicates with OR operator.
             time_range: A tuple of (start_date, end_date) to filter results by time.
             return_dataframe: Whether to return results as a DataFrame (default: True).
+            formatted: Whether to return results as a formatted string (default: True).
 
         Returns:
-            Either a list of tuples or a pandas DataFrame containing the search results.
+            Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
 
         Basic Examples:
             Basic search:
@@ -161,8 +163,42 @@ class VectorStore:
 
         self._log_search_time("Vector", elapsed_time)
 
+        if formatted:
+            return self._format_result_str(results)
+
         if return_dataframe:
             return self._create_dataframe_from_results(results)
+        return results
+
+    def semantic_search_with_filter(
+        self,
+        query: str,
+        long: float,
+        lat: float,
+        limit: int = 5,
+        formatted: bool = True,
+    ):
+        """
+        Query the vector database for similar embeddings based on input text and coordinates (long, lat).
+
+        Args:
+            query: The input text to search for.
+            long: The longitude coordinate.
+            lat: The latitude coordinate.
+            limit: The maximum number of results to return.
+            formatted: Whether to return results as a formatted string (default: True).
+
+        Returns:
+            Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
+        """
+        metadata_filter = Predicates(
+            Predicates(("long", ">=", long)), Predicates(("lat", "<=", lat))
+        )
+
+        results = self.semantic_search(query, predicates=metadata_filter, limit=limit)
+
+        if formatted:
+            return self._format_result_str(results)
         return results
 
     def _create_dataframe_from_results(
@@ -192,6 +228,19 @@ class VectorStore:
         df["id"] = df["id"].astype(str)
 
         return df
+
+    def _format_result_str(self, results: List[Tuple[Any, ...]]) -> str:
+        """
+        Format the search results into a string for display.
+
+        Args:
+            results: A list of tuples containing the search results.
+
+        Returns:
+            A formatted string representation of the search results.
+        """
+        # TODO implement this function
+        pass
 
     def delete(
         self,
