@@ -1,12 +1,13 @@
-
 from http.client import HTTPException
 from src.config import config
 from src.services.load_restaurants.place import GooglePlaceID, Place
 from src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
 from src.services.search_engine.vector_store import VectorStore
+
 # 3rd party
 import googlemaps
 from loguru import logger
+
 
 class UploadPlace:
     def __init__(self):
