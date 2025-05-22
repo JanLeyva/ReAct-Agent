@@ -57,13 +57,13 @@ def get_agent_response(request: TelegramMsg):
 @app.get("/search/query/")
 def get_restaurants_from_query(query: SearchEngineQuery):
     # TODO implement search engine
-    return {"response": {"response": "OK"}}
+    return {"message": "OK"}
 
 
 @app.get("/search/query_coordinates/")
 def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     # TODO implement search engine - w coordinates
-    return {"response": {"response": "OK"}}
+    return {"message": "OK"}
 
 
 if __name__ == "__main__":
