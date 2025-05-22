@@ -41,16 +41,6 @@ class GoogleMapsAPI(PlacesAPI):
             "reviews",
         ]
 
-    def get_places_by_name(self, places_names: list) -> list[GooglePlace]:
-        # get all places id from place name
-        places_id = [self.get_place_id(place_name) for place_name in places_names]
-
-        return self.get_places_by_id(places_id)
-
-    def get_places_by_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
-        # get place info - filter None values
-        return [self.get_place_info(id) for id in places_id if id is not None]
-
     def get_place_id(self, place_name: str) -> "GooglePlaceID":
         """Get place ID field from place name from Google Maps API"""
         place_id = self.gmaps_client.find_place(
@@ -62,11 +52,12 @@ class GoogleMapsAPI(PlacesAPI):
         )
         place = place_id.get("candidates", [])
         if place:
-            logger.info(f"places ID: {place[0].get('name', None)}")
+            place = place[0]
+            logger.info(f"places ID: {place.get('name', None)}")
             return GooglePlaceID(
-                name=place[0].get("name", None),
-                id=place[0].get("place_id", None),
-                business_status=place[0].get("business_status", None),
+                name=place.get("name", None),
+                id=place.get("place_id", None),
+                business_status=place.get("business_status", None),
             )
         raise NoPlaceFound(f"No place found for {place_name}")
 
@@ -81,6 +72,16 @@ class GoogleMapsAPI(PlacesAPI):
         )
 
         return GooglePlace.from_googlemaps_api_response(place_info)
+
+    def get_places_by_name(self, places_names: list) -> list[GooglePlace]:
+        # get all places id from place name
+        places_id = [self.get_place_id(place_name) for place_name in places_names]
+
+        return self.get_places_by_id(places_id)
+
+    def get_places_by_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
+        # get place info - filter None values
+        return [self.get_place_info(id) for id in places_id if id is not None]
 
 
 if __name__ == "__main__":

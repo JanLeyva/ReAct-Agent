@@ -9,34 +9,25 @@ from src.llm.factory import llm
 import asyncio
 from pydantic import BaseModel
 from crawl4ai import AsyncWebCrawler
-from loguru import logger
 
 
-class GooglePlace(BaseModel):
-    """
-    A place from Google Maps API.
-    """
+class PlaceModel(BaseModel):
+    """Base model for validate Place"""
 
     place_id: str
     name: str
     url: str
     international_phone_number: str | None
     formatted_address: str | None
-    formatted_phone_number: str | None
     website: str | None
-    business_status: str | None
-    current_opening_hours: bool | None
     weekday_text: List[str] | None
-    language: str | None
     overview: str | None
     geometry: list[float] | None
     price_level: int | None
     rating: float | None
-    types: list[str] | None
     reservable: bool | None
     delivery: bool | None
     dine_in: bool | None
-    user_ratings_total: int | None
     wheelchair_accessible_entrance: bool | None
     serves_beer: bool | None
     serves_wine: bool | None
@@ -46,6 +37,18 @@ class GooglePlace(BaseModel):
     serves_dinner: bool | None
     serves_vegetarian_food: bool | None
     takeout: bool | None
+
+
+class GooglePlace(PlaceModel):
+    """
+    A place from Google Maps API.
+    """
+
+    language: str | None
+    business_status: str | None
+    current_opening_hours: bool | None
+    user_ratings_total: int | None
+    types: list[str] | None
     reviews: list | None
 
     @classmethod
@@ -63,7 +66,6 @@ class GooglePlace(BaseModel):
             name=result.get("name", None),
             international_phone_number=result.get("international_phone_number", None),
             formatted_address=result.get("formatted_address", None),
-            formatted_phone_number=result.get("formatted_phone_number", None),
             website=result.get("website", None),
             url=result.get("url", None),
             business_status=result.get("business_status", None),
@@ -163,7 +165,8 @@ class GooglePlaceID(BaseModel):
     business_status: str | None
 
 
-class Place(GooglePlace):
+class Place(PlaceModel):
+    full_description: str
     web_text: str | None
     summary_review: str | None
 
@@ -176,14 +179,13 @@ class Place(GooglePlace):
         reviews = (
             cls.summary_reviews(google_place.reviews) if google_place.reviews else None
         )
-        logger.debug(web_text)
-        logger.debug(reviews)
-        logger.debug(type(reviews))
-
         # Add the new fields to the dictionary
         google_place_data["web_text"] = web_text
         google_place_data["summary_review"] = reviews
-
+        # get full description from overview, web_text and summary_review
+        google_place_data["full_description"] = cls.get_full_description(
+            google_place_data
+        )
         return cls.model_validate(google_place_data)
 
     def summary_web_text(url: str) -> str:
@@ -191,14 +193,25 @@ class Place(GooglePlace):
         # scrap url
         web_text = asyncio.run(scrap_url(url))
         prompt = CLEAN_WEB_TEXT.format(web_text=web_text)
-        # TODO return just text no object
-        return llm.complete(prompt).message.content
+        return llm.complete(prompt).text
 
     def summary_reviews(rewiew: List[str]) -> str:
         """Summary place reviews"""
         rewiew = " ".join(rewiew)
         prompt = SUMMARY_REVIEW.format(reviews=rewiew)
-        return llm.complete(prompt).message.content
+        return llm.complete(prompt).text
+
+    def get_full_description(place: "Place") -> str:
+        """
+        Join from the avaiable fills the FULL description
+        overview, web_text and summary_review
+        """
+        all_descriptions = [
+            place.get("overview"),
+            place.get("summary_review"),
+            place.get("web_text"),
+        ]
+        return "\n".join([desc for desc in all_descriptions if desc])
 
 
 async def scrap_url(url: str) -> str:

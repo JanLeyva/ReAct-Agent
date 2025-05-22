@@ -11,7 +11,8 @@ Specifically, you should aim to identify and summarize details such as:
 * **Ambiance and Style:** What kind of atmosphere does the website suggest (e.g., modern, cozy, elegant)?
 * **Unique Selling Points:** Are there any distinctive features or offerings? (e.g., extensive wine list, live music)
 
-You will receive the plain text and code of a restaurant webpage below. Please process this information and return a clear and summarized description.
+You will receive the plain text and code of a restaurant webpage below. Please process this information and return a clear and summarized description. If you do not find some of the previous points do not mention them.
+Craft a summary review of the restaurant, ranging from 80 to 150 words. The description should sound authentic and provide a comprehensive overview of the establishment.
 
 ### WEB TEXT
 {web_text}

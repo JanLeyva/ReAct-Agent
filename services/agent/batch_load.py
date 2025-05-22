@@ -1,6 +1,6 @@
 from src.config import config
 from src.services.load_restaurants.place import GooglePlaceID, Place
-from src.services.load_restaurants.transform import GoogleMapsAPI
+from services.agent.src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
 
 # 3rd party
 import googlemaps
@@ -27,9 +27,11 @@ if __name__ == "__main__":
         GooglePlaceID(name="fake", id=id, business_status="fake")
         for id in places_id["place_id"].to_list()
     ]
-    logger.info(places_id[0])
+    places_id = places_id[:3]
+    logger.info(places_id)
+
     # places = gmaps_api.get_places_by_id(places_id)
-    place = gmaps_api.get_place_info(places_id[0])
-    complet_place = Place.get_place(place)
-    logger.info(complet_place)
+    places_info = [gmaps_api.get_place_info(place) for place in places_id]
+    complet_places = [Place.get_place(place_id) for place_id in places_info]
+    logger.info(complet_places)
     breakpoint()
