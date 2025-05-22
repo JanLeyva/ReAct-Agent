@@ -1,7 +1,7 @@
 # internal lib
-from src.react_agent import ReActAgent
+from src.services.agent.react_agent import ReActAgent
 from src.llm.factory import llm
-from src.tools import tools
+from src.services.agent.tools import tools
 
 # 3rd party
 import asyncio
