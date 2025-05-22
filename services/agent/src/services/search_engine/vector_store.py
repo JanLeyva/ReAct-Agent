@@ -8,6 +8,7 @@ import pandas as pd
 import psycopg
 from src.config import config
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from timescale_vector.client import Predicates, uuid_from_time
 from timescale_vector import client
 
 
@@ -377,3 +378,51 @@ class VectorStore:
         )
 
         return reranked_df.sort_values("relevance_score", ascending=False)
+
+    @staticmethod
+    def prepare_record(row):
+        """Prepare a record for insertion into the vector store.
+
+        Args:
+            row (pandas.Series): A row from the dataset containing an 'article' column.
+
+        Returns:
+            pandas.Series: A series containing the prepared record for insertion.
+
+        Note:
+            This function uses the current time for the UUID. To use a specific time,
+            create a datetime object and use uuid_from_time(your_datetime).
+        """
+        content = row["overview"]
+        if content:
+            embedding = VectorStore.get_embedding(content)
+            # TODO check if we can insert dif data types
+            return pd.Series(
+                {
+                    "id": str(uuid_from_time(datetime.now())),
+                    "metadata": {
+                        "created_at": datetime.now().isoformat(),
+                        "place_id": row["place_id"],
+                        "name": row["name"],
+                        "url": row["url"],
+                        "international_phone_number": row["international_phone_number"],
+                        "formatted_address": row["formatted_address"],
+                        "website": row["website"],
+                        "long": row["geometry"][0],
+                        "lat": row["geometry"][1],
+                        "price_level": row["price_level"],
+                        "reservable": row["reservable"],
+                        "delivery": row["delivery"],
+                        "dine_in": row["dine_in"],
+                        "wheelchair_accessible_entrance": row[
+                            "wheelchair_accessible_entrance"
+                        ],
+                        "serves_breakfast": row["serves_breakfast"],
+                        "serves_brunch": row["serves_brunch"],
+                        "takeout": row["takeout"],
+                    },
+                    "contents": content,
+                    "embedding": embedding,
+                }
+            )
+        return None

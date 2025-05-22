@@ -1,7 +1,7 @@
 from src.config import config
 from src.services.load_restaurants.place import GooglePlaceID, Place
-from services.agent.src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
-
+from src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
+from src.services.search_engine.vector_store import VectorStore
 # 3rd party
 import googlemaps
 import polars as pl
@@ -12,6 +12,7 @@ if __name__ == "__main__":
     # Google Maps Client
     gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
     gmaps_api = GoogleMapsAPI(gmaps_client)
+    vec = VectorStore()
 
     # Places from my persnal list - Uncomment below in case GET places from NAME
     # hi_vull_anar = pl.read_csv(
@@ -34,4 +35,11 @@ if __name__ == "__main__":
     places_info = [gmaps_api.get_place_info(place) for place in places_id]
     complet_places = [Place.get_place(place_id) for place_id in places_info]
     logger.info(complet_places)
+    complet_places = pl.DataFrame(complet_places)
+
+    # vec.create_tables()
+    # vec.create_index()  # DiskAnnIndex
+    # vec.create_keyword_search_index()  # GIN Index
+    records = complet_places.apply(vec.prepare_record, axis=1)
+    vec.upsert(records)
     breakpoint()

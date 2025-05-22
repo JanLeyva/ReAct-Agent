@@ -1,4 +1,5 @@
 # internal lib
+from services.agent.src.services.load_restaurants.upload_place import UploadPlace
 from src.services.agent.react_agent import ReActAgent
 from src.llm.factory import llm
 from src.services.agent.tools import tools
@@ -66,5 +67,14 @@ def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     return {"message": "OK"}
 
 
+@app.post("/upload/restaurant/{place_name}")
+def upload_restaurant(place_name: str):
+    """
+    Upload restaurant to vector store
+    """
+    UploadPlace().upload_places_by_name(place_name)
+    return {"message": f"Place '{place_name}' uploaded successfully."}
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
+    uvicorn.run(app, host="0.0.0.0", port=80, log_level="debug")

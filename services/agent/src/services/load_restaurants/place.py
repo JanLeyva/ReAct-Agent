@@ -9,7 +9,7 @@ from src.llm.factory import llm
 import asyncio
 from pydantic import BaseModel
 from crawl4ai import AsyncWebCrawler
-
+import polars as pl
 
 class PlaceModel(BaseModel):
     """Base model for validate Place"""
@@ -212,6 +212,12 @@ class Place(PlaceModel):
             place.get("web_text"),
         ]
         return "\n".join([desc for desc in all_descriptions if desc])
+    
+    def get_place_df(self, google_place: GooglePlace) -> pl.DataFrame:
+        """
+        Convert the Place object to a dictionary.
+        """
+        return pl.DataFrame(self.get_place(google_place))
 
 
 async def scrap_url(url: str) -> str:
