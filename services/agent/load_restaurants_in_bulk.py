@@ -6,6 +6,7 @@ from src.services.search_engine.vector_store import VectorStore
 # 3rd party
 import googlemaps
 import polars as pl
+import pandas as pd
 from loguru import logger
 
 
@@ -14,6 +15,11 @@ if __name__ == "__main__":
     gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
     gmaps_api = GoogleMapsAPI(gmaps_client)
     vec = VectorStore()
+
+    # vec.create_tables()
+    # vec.create_index()  # DiskAnnIndex
+    # vec.create_keyword_search_index()  # GIN Index
+    # logger.info("created db")
 
     # Places from my persnal list - Uncomment below in case GET places from NAME
     # hi_vull_anar = pl.read_csv(
@@ -29,18 +35,20 @@ if __name__ == "__main__":
         GooglePlaceID(name="fake", id=id, business_status="fake")
         for id in places_id["place_id"].to_list()
     ]
-    places_id = places_id[:3]
+    places_id = places_id[:2]
     logger.info(places_id)
 
     # places = gmaps_api.get_places_by_id(places_id)
     places_info = [gmaps_api.get_place_info(place) for place in places_id]
     complet_places = [Place.get_place(place_id) for place_id in places_info]
-    logger.info(complet_places)
+    # TODO migrate this to Polars - vec.prepare_record
+    # Also handle None values - Token "NaN" is invalid.
     complet_places = pl.DataFrame(complet_places)
-
-    # vec.create_tables()
-    # vec.create_index()  # DiskAnnIndex
-    # vec.create_keyword_search_index()  # GIN Index
-    records = complet_places.apply(vec.prepare_record, axis=1)
+    breakpoint()
+    complet_places_df = pd.DataFrame(complet_places)
+    complet_places_df.columns = complet_places.columns
+    logger.info(complet_places)
+    records = complet_places_df.apply(vec.prepare_record, axis=1)
+    # records = complet_places.with_columns(pl.col("full_description").map_elements(vec.prepare_record).alias("doubled_numbers"))
     vec.upsert(records)
     breakpoint()

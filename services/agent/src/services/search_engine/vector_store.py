@@ -429,8 +429,7 @@ class VectorStore:
 
         return reranked_df.sort_values("relevance_score", ascending=False)
 
-    @staticmethod
-    def prepare_record(row):
+    def prepare_record(self, row):
         """Prepare a record for insertion into the vector store.
 
         Args:
@@ -443,9 +442,9 @@ class VectorStore:
             This function uses the current time for the UUID. To use a specific time,
             create a datetime object and use uuid_from_time(your_datetime).
         """
-        content = row["overview"]
+        content = row["full_description"]
         if content:
-            embedding = VectorStore.get_embedding(content)
+            embedding = self.get_embedding(content)
             # TODO check if we can insert dif data types
             return pd.Series(
                 {
@@ -455,6 +454,9 @@ class VectorStore:
                         "place_id": row["place_id"],
                         "name": row["name"],
                         "url": row["url"],
+                        "full_description": row["full_description"],
+                        "web_text": row["web_text"],
+                        "summary_review": row["summary_review"],
                         "international_phone_number": row["international_phone_number"],
                         "formatted_address": row["formatted_address"],
                         "website": row["website"],
