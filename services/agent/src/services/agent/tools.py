@@ -33,7 +33,7 @@ def get_restaurant_recommendation_from_text(
     user request -> text. example is a description of the restaurant they want.
     """
     logger.info("get_restaurant_recommendation_from_text")
-    return vec.semantic_search(text, top_k=5)
+    return vec.semantic_search(text)
 
 
 def get_restaurant_recommendation_from_coordinates(

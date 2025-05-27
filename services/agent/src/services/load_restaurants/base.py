@@ -5,9 +5,9 @@ from .place import Place
 
 class PlacesAPI(ABC):
     @abstractmethod
-    def get_places_by_id(self) -> list[Place]:
+    def get_place_id(self) -> list[Place]:
         pass
 
     @abstractmethod
-    def get_places_by_name(self) -> list[Place]:
+    def get_place_info(self) -> list[Place]:
         pass

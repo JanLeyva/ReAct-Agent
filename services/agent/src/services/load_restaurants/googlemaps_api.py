@@ -1,6 +1,6 @@
 from ...config import config
 from .base import PlacesAPI
-from .place import GooglePlace, GooglePlaceID
+from .place import GooglePlace, GooglePlaceID, Place
 from ..exceptions import NoPlaceFound
 import googlemaps
 import polars as pl
@@ -8,8 +8,8 @@ from loguru import logger
 
 
 class GoogleMapsAPI(PlacesAPI):
-    def __init__(self, gmaps_client: googlemaps.Client):
-        self.gmaps_client = gmaps_client
+    def __init__(self):
+        self.gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
         self.fields_place = [
             "place_id",
             "name",
@@ -73,40 +73,27 @@ class GoogleMapsAPI(PlacesAPI):
 
         return GooglePlace.from_googlemaps_api_response(place_info)
 
-    def get_places_by_name(self, places_names: list) -> list[GooglePlace]:
+    def get_places_bulk(self, places_names: list) -> pl.DataFrame:
+        """Get places from GoogleMaps API
+        1. Get place ID from name
+        2. Get place information from ID
+        3. Refine place information with web scap, summary descriptions
+
+        Input: list[str] of places names
+
+        Return:
+           (pl.DataFrame): with all places."""
         # get all places id from place name
+        logger.info("get places ID")
         places_id = [self.get_place_id(place_name) for place_name in places_names]
+        logger.info("get places details")
+        places_info = self._get_places_by_id(places_id)
+        logger.info("get places details")
+        places_complet = [Place.get_place(place_id) for place_id in places_info]
 
-        return self.get_places_by_id(places_id)
+        return pl.DataFrame(places_complet)
 
-    def get_places_by_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
+    def _get_places_by_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
+        """Get places information by ID in bulk"""
         # get place info - filter None values
         return [self.get_place_info(id) for id in places_id if id is not None]
-
-
-if __name__ == "__main__":
-    # Google Maps Client
-    gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
-    gmaps_api = GoogleMapsAPI(gmaps_client)
-
-    # Places from my persnal list - Uncomment below in case GET places from NAME
-    # hi_vull_anar = pl.read_csv(
-    #     "data/Hi vull anar.csv", separator=","
-    # )
-    # places_names = hi_vull_anar.select(pl.col("Títol")).to_series().to_list()
-
-    places_id = pl.read_parquet(
-        "/Users/esengineer/Documents/_dev/whatsapp-agent/docs/data/filtered_data.parquet"
-    )
-
-    places_id = [
-        GooglePlaceID(name="fake", id=id, business_status="fake")
-        for id in places_id["place_id"].to_list()
-    ]
-    logger.info(places_id[0])
-    # places = gmaps_api.get_places_by_id(places_id)
-    place = gmaps_api.get_place_info(places_id[0])
-    logger.info(place)
-    breakpoint()
-    # complet_place = Place.get_place(place)
-    # logger.info(complet_place)

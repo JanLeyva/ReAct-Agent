@@ -1,24 +1,18 @@
 # internal libs
-from src.config import config
 from src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
 from src.services.load_restaurants.place import GooglePlace, GooglePlaceID, Place
 
 # 3rd party
 import pytest
-import googlemaps
 
 # Google Maps Client
-gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
-gmaps_api = GoogleMapsAPI(gmaps_client)
+gmaps_api = GoogleMapsAPI()
 
 
 @pytest.mark.parametrize(("place_name"), ["Gresca", "Majide"])
 def test_get_id_from_name(place_name: str):
     """Get place from google maps API from name"""
     response_place = gmaps_api.get_place_id(place_name)
-    print(response_place)
-    print(response_place.name)
-    print(type(response_place.name))
 
     assert isinstance(response_place.name, str)
     assert isinstance(response_place.id, str)
@@ -39,9 +33,6 @@ def test_get_id_from_name(place_name: str):
 def test_get_place_info(place_id: GooglePlaceID):
     """Get place from google maps API from name"""
     response_place = gmaps_api.get_place_info(place_id)
-    print(response_place)
-    print(response_place.name)
-    print(type(response_place.name))
 
     assert isinstance(response_place.place_id, str)
     assert isinstance(response_place.name, str)
@@ -147,7 +138,7 @@ def test_get_place_info(place_id: GooglePlaceID):
         ),
     ],
 )
-def test_get_full_place(google_place: GooglePlace):
+def test_get_full_place_info(google_place: GooglePlace):
     """
     Get full place info: full_description, web_text,
     summary_review

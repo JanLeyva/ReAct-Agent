@@ -5,6 +5,8 @@ from typing import Any, List, Optional, Tuple, Union
 
 import cohere
 import pandas as pd
+import polars as pl
+import numpy as np
 import psycopg
 from src.config import config
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
@@ -78,7 +80,7 @@ class VectorStore:
         """Drop the StreamingDiskANN index in the database"""
         self.vec_client.drop_embedding_index()
 
-    def upsert(self, df: pd.DataFrame) -> None:
+    def upsert(self, df: pl.DataFrame) -> None:
         """
         Insert or update records in the database from a pandas DataFrame.
 
@@ -86,8 +88,12 @@ class VectorStore:
             df: A pandas DataFrame containing the data to insert or update.
                 Expected columns: id, metadata, contents, embedding
         """
-        records = df.to_records(index=False)
-        self.vec_client.upsert(list(records))
+        # proper format to upload data to pgvector
+        records = [
+            (row["id"], row["metadata"], row["contents"], np.array(row["embedding"]))
+            for row in df.iter_rows(named=True)
+        ]
+        self.vec_client.upsert(records)
         logger.info(f"Inserted {len(df)} records into {self.settings.table_name}")
 
     def semantic_search(
@@ -230,7 +236,7 @@ class VectorStore:
 
         return df
 
-    def _format_result_str(self, results: List[Tuple[Any, ...]]) -> str:
+    def _format_result_str(self, results: pd.DataFrame) -> str:
         """
         Format the search results into a string for display.
 
@@ -241,7 +247,15 @@ class VectorStore:
             A formatted string representation of the search results.
         """
         # TODO implement this function
-        pass
+        template = "{idx}: {name}: {description}\n"
+        result_formatted = [
+            template.format(
+                idx=idx + 1, name=place["name"], description=place["content"]
+            )
+            for idx, (_, place) in enumerate(results.iterrows())
+        ]
+
+        return "".join(result_formatted)
 
     def delete(
         self,
@@ -338,8 +352,7 @@ class VectorStore:
             df = pd.DataFrame(results, columns=["id", "content", "rank"])
             df["id"] = df["id"].astype(str)
             return df
-        else:
-            return results
+        return results
 
     def hybrid_search(
         self,
@@ -429,7 +442,7 @@ class VectorStore:
 
         return reranked_df.sort_values("relevance_score", ascending=False)
 
-    def prepare_record(self, row):
+    def prepare_record(self, row) -> pd.Series:
         """Prepare a record for insertion into the vector store.
 
         Args:
@@ -445,7 +458,6 @@ class VectorStore:
         content = row["full_description"]
         if content:
             embedding = self.get_embedding(content)
-            # TODO check if we can insert dif data types
             return pd.Series(
                 {
                     "id": str(uuid_from_time(datetime.now())),
@@ -478,3 +490,74 @@ class VectorStore:
                 }
             )
         return None
+
+    def process_data_for_vector_db(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Transforms the input DataFrame rows into a structured format suitable for a vector database.
+
+        Args:
+            df: The input Polars DataFrame containing restaurant data.
+
+        Returns:
+            A Polars DataFrame with a single column of type Struct,
+            where each row is a dictionary containing 'id', 'metadata', 'contents', and 'embedding'.
+        """
+
+        # Ensure 'full_description' is Utf8 and handle potential None values
+        # by filling them with an empty string for embedding generation.
+        # This prevents map_elements from failing on None.
+        df_processed = df.with_columns(
+            pl.col("full_description")
+            .cast(pl.Utf8)
+            .fill_null("")
+            .alias("full_description_for_embedding")
+        )
+        # 1. Generate 'embedding' column using map_elements
+        #    This is necessary because self.get_embedding is a Python function.
+        df_processed = df_processed.with_columns(
+            pl.col("full_description_for_embedding")
+            .map_elements(
+                lambda content: self.get_embedding(content),
+                return_dtype=pl.List(
+                    pl.Float32
+                ),  # Crucial for performance and type inference
+            )
+            .alias("embedding")
+        )
+        # 2. Generate 'id' column using map_elements (or simpler series creation)
+        #    We generate a UUID for each row.
+        df_processed = df_processed.with_columns(
+            pl.Series(
+                name="id",
+                values=[str(uuid_from_time(datetime.now())) for _ in range(df.height)],
+                dtype=pl.Utf8,  # UUIDs are strings
+            )
+        )
+
+        metadata_struct = pl.struct(
+            [
+                pl.lit(datetime.now().isoformat()).alias("created_at"),  # Literal value
+                pl.col("name").alias("name"),
+                pl.col("url").alias("url"),
+                pl.col("web_text").alias("web_text"),
+                pl.col("summary_review").alias("summary_review"),
+                pl.col("international_phone_number").alias(
+                    "international_phone_number"
+                ),
+                pl.col("formatted_address").alias("formatted_address"),
+                pl.col("website").alias("website"),
+                pl.col("geometry").list.get(0).alias("long"),
+                pl.col("geometry").list.get(1).alias("lat"),
+                pl.col("price_level").alias("price_level"),
+            ]
+        ).alias("metadata")
+
+        # Select only the newly constructed column
+        return df_processed.with_columns(
+            [
+                pl.col("id"),
+                metadata_struct,
+                pl.col("embedding"),
+                pl.col("full_description").alias("contents"),
+            ]
+        ).select(["id", "metadata", "embedding", "contents"])
