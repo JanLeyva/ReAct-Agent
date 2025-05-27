@@ -5,7 +5,7 @@ from typing import Dict
 from src.config import config
 
 # 3rd party lib
-from src.llm.base import (
+from src.shared.llm.base import (
     BaseLLM,
     ModelName,
     ModelProvider,

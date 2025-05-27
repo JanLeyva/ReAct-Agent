@@ -4,7 +4,7 @@ import os
 
 # internal libs
 from src.config import config
-from src.templates.prompts import (
+from src.shared.templates.prompts import (
     CONTEXT_REACT_CHAT_SYSTEM_HEADER,
     ROUTER_PROMPT,
     ANSWER_PROMPT,

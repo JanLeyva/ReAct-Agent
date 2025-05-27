@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 # internal lib
-from ..config import config
+from src.config import config
 
 # 3rd party
 from llama_index.llms.groq import Groq

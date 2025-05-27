@@ -2,8 +2,8 @@
 from typing import List
 
 # internal libs
-from src.templates.prompts import CLEAN_WEB_TEXT, SUMMARY_REVIEW
-from src.llm.factory import llm
+from src.shared.templates.prompts import CLEAN_WEB_TEXT, SUMMARY_REVIEW
+from src.shared.llm.factory import llm
 
 # 3rd party
 import asyncio

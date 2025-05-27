@@ -2,7 +2,7 @@
 from src.services.load_restaurants.upload_place import UploadPlace
 from src.services.agent.react_agent import ReActAgent
 from src.services.search_engine.vector_store import VectorStore
-from src.llm.factory import llm
+from src.shared.llm.factory import llm
 from src.services.agent.tools import tools
 
 # 3rd party
