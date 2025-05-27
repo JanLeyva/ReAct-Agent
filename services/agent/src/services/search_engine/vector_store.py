@@ -170,7 +170,7 @@ class VectorStore:
         self._log_search_time("Vector", elapsed_time)
 
         if formatted:
-            return self._format_result_str(results)
+            return self._format_result_str(self._create_dataframe_from_results(results))
 
         if return_dataframe:
             return self._create_dataframe_from_results(results)
