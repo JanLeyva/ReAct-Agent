@@ -1,19 +1,17 @@
 from http.client import HTTPException
-from src.config import config
+# internal libs
 from src.services.load_restaurants.place import GooglePlaceID, Place
 from src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
 from src.services.search_engine.vector_store import VectorStore
 
 # 3rd party
-import googlemaps
 from loguru import logger
 
 
 class UploadPlace:
     def __init__(self):
         # Google Maps Client
-        gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
-        self.gmaps_api = GoogleMapsAPI(gmaps_client)
+        self.gmaps_api = GoogleMapsAPI()
         self.vec = VectorStore()
 
     def upload_places_by_name(self, place_name: str) -> None:

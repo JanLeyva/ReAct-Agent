@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # logger.info("created db")
     # Mock
     places_id = pl.read_parquet(
-        "/Users/esengineer/Documents/_dev/whatsapp-agent/docs/data/filtered_data.parquet"
+        "/Users/janleyvamassague/Documents/agnostic-agent/docs/data/filtered_data.parquet"
     )
     places_names = places_id["name"].to_list()
     places_names = places_names[:2]

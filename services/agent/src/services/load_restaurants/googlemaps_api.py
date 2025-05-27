@@ -9,7 +9,7 @@ from loguru import logger
 
 class GoogleMapsAPI(PlacesAPI):
     def __init__(self):
-        self.gmaps_client = googlemaps.Client(key=config.googlemaps_api_key)
+        self.gmaps_client = googlemaps.Client(key=config.api_key_google_maps)
         self.fields_place = [
             "place_id",
             "name",

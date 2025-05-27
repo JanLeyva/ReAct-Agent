@@ -23,14 +23,17 @@ dependencies = [
     "playwright>=1.52.0",
     "polars>=1.30.0",
     "pre-commit>=4.2.0",
+    "psycopg2==2.9.10",
     "psycopg>=3.2.9",
     "pydantic-settings>=2.8.1",
     "pytest>=8.3.5",
     "timescale-vector>=0.0.7",
     "uvicorn>=0.34.2",
+    "time-uuid>=0.2.0",
+    "vecs>=0.4.5",
 ]
 
 [tool.uv]
-required-environments = [
+environments = [
     "sys_platform == 'darwin' and platform_machine == 'x86_64'"
 ]

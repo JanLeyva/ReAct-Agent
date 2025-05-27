@@ -1,17 +1,17 @@
 from loguru import logger
 import time
-from datetime import datetime
-from typing import Any, List, Tuple, Union
+from datetime import datetime, timedelta
+from typing import Any, List, Optional, Tuple, Union
 
 import cohere
-import time_uuid
 import pandas as pd
 import polars as pl
 import numpy as np
 import psycopg
 from src.config import config
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
-import vecs
+from timescale_vector.client import Predicates, uuid_from_time
+from timescale_vector import client
 
 
 class VectorStore:
@@ -26,8 +26,14 @@ class VectorStore:
             api_key=config.api_key_google_genai,
         )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
-        self.vec_client = vecs.create_client(config.database_service_url)
-        self.vx_db = self.vec_client.get_or_create_collection(name="restaurants", dimension=3)
+        self.vec_client = client.Sync(
+            self.settings.database_service_url,
+            self.settings.table_name,
+            self.settings.embedding_dimensions,
+            time_partition_interval=timedelta(
+                days=self.settings.time_partition_interval
+            ),
+        )
 
     def create_keyword_search_index(self):
         """Create a GIN index for keyword search if it doesn't exist."""
@@ -62,9 +68,17 @@ class VectorStore:
         logger.info(f"Embedding generated in {elapsed_time:.3f} seconds")
         return embedding
 
+    def create_tables(self) -> None:
+        """Create the necessary tablesin the database"""
+        self.vec_client.create_tables()
+
     def create_index(self) -> None:
         """Create the StreamingDiskANN index to spseed up similarity search"""
-        self.vx_db.create_index(measure=vecs.IndexMeasure.cosine_distance)
+        self.vec_client.create_embedding_index(client.DiskAnnIndex())
+
+    def drop_index(self) -> None:
+        """Drop the StreamingDiskANN index in the database"""
+        self.vec_client.drop_embedding_index()
 
     def upsert(self, df: pl.DataFrame) -> None:
         """
@@ -79,7 +93,7 @@ class VectorStore:
             (row["id"], row["metadata"], row["contents"], np.array(row["embedding"]))
             for row in df.iter_rows(named=True)
         ]
-        self.vx_db.upsert(records)
+        self.vec_client.upsert(records)
         logger.info(f"Inserted {len(df)} records into {self.settings.table_name}")
 
     def semantic_search(
@@ -87,6 +101,8 @@ class VectorStore:
         query: str,
         limit: int = 5,
         metadata_filter: Union[dict, List[dict]] = None,
+        predicates: Optional[client.Predicates] = None,
+        time_range: Optional[Tuple[datetime, datetime]] = None,
         formatted: bool = True,
         return_dataframe: bool = False,
     ) -> Union[List[Tuple[Any, ...]], pd.DataFrame]:
@@ -136,15 +152,19 @@ class VectorStore:
 
         search_args = {
             "limit": limit,
-            "measure":"cosine_distance",   # distance measure to use
-            "include_value": False,         # should distance measure values be returned?
-            "include_metadata": True,      # should record metadata be returned?
         }
 
         if metadata_filter:
             search_args["filter"] = metadata_filter
 
-        results = self.vx_db.query(query_embedding, **search_args)
+        if predicates:
+            search_args["predicates"] = predicates
+
+        if time_range:
+            start_date, end_date = time_range
+            search_args["uuid_time_filter"] = client.UUIDTimeRange(start_date, end_date)
+
+        results = self.vec_client.search(query_embedding, **search_args)
         elapsed_time = time.time() - start_time
 
         self._log_search_time("Vector", elapsed_time)
@@ -156,37 +176,37 @@ class VectorStore:
             return self._create_dataframe_from_results(results)
         return results
 
-    # def semantic_search_with_filter(
-    #     self,
-    #     query: str,
-    #     long: float,
-    #     lat: float,
-    #     limit: int = 5,
-    #     formatted: bool = True,
-    # ):
-    #     """
-    #     Query the vector database for similar embeddings based on input text and coordinates (long, lat).
+    def semantic_search_with_filter(
+        self,
+        query: str,
+        long: float,
+        lat: float,
+        limit: int = 5,
+        formatted: bool = True,
+    ):
+        """
+        Query the vector database for similar embeddings based on input text and coordinates (long, lat).
 
-    #     Args:
-    #         query: The input text to search for.
-    #         long: The longitude coordinate.
-    #         lat: The latitude coordinate.
-    #         limit: The maximum number of results to return.
-    #         formatted: Whether to return results as a formatted string (default: True).
+        Args:
+            query: The input text to search for.
+            long: The longitude coordinate.
+            lat: The latitude coordinate.
+            limit: The maximum number of results to return.
+            formatted: Whether to return results as a formatted string (default: True).
 
-    #     Returns:
-    #         Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
-    #     """
-    #     # TODO: implement coordinates filtering <- square?
-    #     metadata_filter = Predicates(
-    #         Predicates(("long", ">=", long)), Predicates(("lat", "<=", lat))
-    #     )
+        Returns:
+            Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
+        """
+        # TODO: implement coordinates filtering <- square?
+        metadata_filter = Predicates(
+            Predicates(("long", ">=", long)), Predicates(("lat", "<=", lat))
+        )
 
-    #     results = self.semantic_search(query, predicates=metadata_filter, limit=limit)
+        results = self.semantic_search(query, predicates=metadata_filter, limit=limit)
 
-    #     if formatted:
-    #         return self._format_result_str(results)
-    #     return results
+        if formatted:
+            return self._format_result_str(results)
+        return results
 
     def _create_dataframe_from_results(
         self,
@@ -440,7 +460,7 @@ class VectorStore:
             embedding = self.get_embedding(content)
             return pd.Series(
                 {
-                    "id": str(time_uuid.TimeUUID.with_utc(time_uuid.utctime())),
+                    "id": str(uuid_from_time(datetime.now())),
                     "metadata": {
                         "created_at": datetime.now().isoformat(),
                         "place_id": row["place_id"],

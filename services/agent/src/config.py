@@ -9,11 +9,9 @@ class Config(BaseSettings):
     groq_api_key: str
     openai_api_key: Optional[str]
     api_key_bot_telegram: Optional[str]
-    tavily_api_key: Optional[str]
-    api_key_google_maps: Optional[str]
     api_key_opik: Optional[str]
-    api_key_google_genai: Optional[str]
-    googlemaps_api_key: str
+    api_key_google_genai: str
+    api_key_google_maps: str
     opik_workspace: Optional[str]
     opik_project_name: Optional[str]
     model_provider: Literal["groq", "openai"]
