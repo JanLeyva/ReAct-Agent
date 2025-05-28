@@ -2,9 +2,14 @@
 from typing import List
 
 # internal libs
-from src.shared.templates.prompts import CLEAN_WEB_TEXT, SUMMARY_REVIEW, SUMMARY_DESCRIPTION
+from src.shared.templates.prompts import (
+    CLEAN_WEB_TEXT,
+    SUMMARY_REVIEW,
+    SUMMARY_DESCRIPTION,
+)
 from src.shared.llm.factory import llm
 import polars as pl
+
 # 3rd party
 import asyncio
 from pydantic import BaseModel
@@ -184,9 +189,7 @@ class Place(PlaceModel):
         google_place_data["web_text"] = web_text
         google_place_data["summary_review"] = reviews
         # get full description from overview, web_text and summary_review
-        full_description = cls.get_full_description(
-            google_place_data
-        )
+        full_description = cls.get_full_description(google_place_data)
 
         description = (
             cls.summary_description(full_description) if google_place.reviews else None
@@ -194,7 +197,6 @@ class Place(PlaceModel):
         google_place_data["description"] = description
 
         return cls.model_validate(google_place_data)
-    
 
     def summary_description(description: str) -> str:
         """Summary the web text, clean and extract relevant info"""
@@ -225,10 +227,9 @@ class Place(PlaceModel):
             place.get("web_text"),
         ]
         return "\n".join([desc for desc in all_descriptions if desc])
-    
+
     def to_df(self) -> pl.DataFrame:
         return pl.DataFrame([self.model_dump()])
-        
 
 
 async def scrap_url(url: str) -> str:

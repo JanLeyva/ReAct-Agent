@@ -1,9 +1,8 @@
 from ...config import config
 from .base import PlacesAPI
-from .place import GooglePlace, GooglePlaceID, Place
+from .place import GooglePlace, GooglePlaceID
 from ..exceptions import NoPlaceFound
 import googlemaps
-import polars as pl
 from loguru import logger
 
 

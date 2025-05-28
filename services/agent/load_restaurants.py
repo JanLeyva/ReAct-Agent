@@ -1,6 +1,5 @@
 # internal libs
 from src.services.load_restaurants.upload_place import GetUploadPlace
-from src.services.load_restaurants.googlemaps_api import GoogleMapsAPI
 from src.services.search_engine.vector_store import VectorStore
 
 # 3rd party
