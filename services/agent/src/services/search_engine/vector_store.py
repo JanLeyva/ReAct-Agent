@@ -27,7 +27,9 @@ class VectorStore:
         )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
         self.vec_client = vecs.create_client(config.database_service_url)
-        self.vx_db = self.vec_client.get_or_create_collection(name="restaurants_v2", dimension=config.embedding_dimensions)
+        self.vx_db = self.vec_client.get_or_create_collection(
+            name="restaurants_v2", dimension=config.embedding_dimensions
+        )
 
     def create_keyword_search_index(self):
         """Create a GIN index for keyword search if it doesn't exist."""
@@ -137,9 +139,9 @@ class VectorStore:
 
         search_args = {
             "limit": limit,
-            "measure":"cosine_distance",   # distance measure to use
-            "include_value": False,         # should distance measure values be returned?
-            "include_metadata": True,      # should record metadata be returned?
+            "measure": "cosine_distance",  # distance measure to use
+            "include_value": False,  # should distance measure values be returned?
+            "include_metadata": True,  # should record metadata be returned?
         }
 
         if metadata_filter:
@@ -510,7 +512,10 @@ class VectorStore:
         df_processed = df_processed.with_columns(
             pl.Series(
                 name="id",
-                values=[str(time_uuid.TimeUUID.with_timestamp(time_uuid.utctime())) for _ in range(df.height)],
+                values=[
+                    str(time_uuid.TimeUUID.with_timestamp(time_uuid.utctime()))
+                    for _ in range(df.height)
+                ],
                 dtype=pl.Utf8,  # UUIDs are strings
             )
         )
@@ -536,9 +541,5 @@ class VectorStore:
 
         # Select only the newly constructed column
         return df_processed.with_columns(
-            [
-                pl.col("id"),
-                pl.col("embedding"),
-                metadata_struct
-            ]
+            [pl.col("id"), pl.col("embedding"), metadata_struct]
         ).select(["id", "embedding", "metadata"])
