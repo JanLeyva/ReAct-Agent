@@ -27,7 +27,7 @@ class VectorStore:
         )
         self.cohere_client = cohere.ClientV2(api_key=self.settings.cohere_api_key)
         self.vec_client = vecs.create_client(config.database_service_url)
-        self.vx_db = self.vec_client.get_or_create_collection(name="restaurants", dimension=3)
+        self.vx_db = self.vec_client.get_or_create_collection(name="restaurants_v2", dimension=config.embedding_dimensions)
 
     def create_keyword_search_index(self):
         """Create a GIN index for keyword search if it doesn't exist."""
@@ -76,10 +76,11 @@ class VectorStore:
         """
         # proper format to upload data to pgvector
         records = [
-            (row["id"], row["metadata"], row["contents"], np.array(row["embedding"]))
+            (row["id"], np.array(row["embedding"]), row["metadata"])
             for row in df.iter_rows(named=True)
         ]
         self.vx_db.upsert(records)
+        breakpoint()
         logger.info(f"Inserted {len(df)} records into {self.settings.table_name}")
 
     def semantic_search(
@@ -509,7 +510,7 @@ class VectorStore:
         df_processed = df_processed.with_columns(
             pl.Series(
                 name="id",
-                values=[str(uuid_from_time(datetime.now())) for _ in range(df.height)],
+                values=[str(time_uuid.TimeUUID.with_timestamp(time_uuid.utctime())) for _ in range(df.height)],
                 dtype=pl.Utf8,  # UUIDs are strings
             )
         )
@@ -519,6 +520,7 @@ class VectorStore:
                 pl.lit(datetime.now().isoformat()).alias("created_at"),  # Literal value
                 pl.col("name").alias("name"),
                 pl.col("url").alias("url"),
+                pl.col("full_description").alias("contents"),
                 pl.col("web_text").alias("web_text"),
                 pl.col("summary_review").alias("summary_review"),
                 pl.col("international_phone_number").alias(
@@ -536,8 +538,7 @@ class VectorStore:
         return df_processed.with_columns(
             [
                 pl.col("id"),
-                metadata_struct,
                 pl.col("embedding"),
-                pl.col("full_description").alias("contents"),
+                metadata_struct
             ]
-        ).select(["id", "metadata", "embedding", "contents"])
+        ).select(["id", "embedding", "metadata"])
