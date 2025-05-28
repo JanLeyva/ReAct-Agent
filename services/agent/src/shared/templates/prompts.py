@@ -31,3 +31,6 @@ with (Path(__file__).parents[0] / Path("clean_web_text.md")).open("r") as f:
 
 with (Path(__file__).parents[0] / Path("summary_review.md")).open("r") as f:
     SUMMARY_REVIEW = f.read()
+
+with (Path(__file__).parents[0] / Path("summary_description.md")).open("r") as f:
+    SUMMARY_DESCRIPTION = f.read()

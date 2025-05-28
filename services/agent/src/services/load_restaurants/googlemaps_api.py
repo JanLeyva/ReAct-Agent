@@ -61,7 +61,7 @@ class GoogleMapsAPI(PlacesAPI):
             )
         raise NoPlaceFound(f"No place found for {place_name}")
 
-    def get_place_info(self, place_id: GooglePlaceID) -> "GooglePlace":
+    def get_place_from_id(self, place_id: GooglePlaceID) -> "GooglePlace":
         """Get place info from place_id in Google Maps API"""
         place_info = self.gmaps_client.place(
             place_id.id,
@@ -73,27 +73,28 @@ class GoogleMapsAPI(PlacesAPI):
 
         return GooglePlace.from_googlemaps_api_response(place_info)
 
-    def get_places_bulk(self, places_names: list) -> pl.DataFrame:
-        """Get places from GoogleMaps API
-        1. Get place ID from name
-        2. Get place information from ID
-        3. Refine place information with web scap, summary descriptions
+    # TODO to delete <- this is wraped in "GetUploadPlace"
+    # def get_places_bulk(self, places_names: list) -> pl.DataFrame:
+    #     """Get places from GoogleMaps API
+    #     1. Get place ID from name
+    #     2. Get place information from ID
+    #     3. Refine place information with web scap, summary descriptions
 
-        Input: list[str] of places names
+    #     Input: list[str] of places names
 
-        Return:
-           (pl.DataFrame): with all places."""
-        # get all places id from place name
-        logger.info("get places ID")
-        places_id = [self.get_place_id(place_name) for place_name in places_names]
-        logger.info("get places details")
-        places_info = self._get_places_by_id(places_id)
-        logger.info("get places details")
-        places_complet = [Place.get_place(place_id) for place_id in places_info]
+    #     Return (pl.DataFrame): with all places.
+    #     """
+    #     # get all places id from place name
+    #     logger.info("get places ID")
+    #     places_id = [self.get_place_id(place_name) for place_name in places_names]
+    #     logger.info("get places details")
+    #     places_info = self._get_places_from_id(places_id)
+    #     logger.info("get places details")
+    #     places_complet = [Place.get_place(place_id) for place_id in places_info]
 
-        return pl.DataFrame(places_complet)
+    #     return pl.DataFrame(places_complet)
 
-    def _get_places_by_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
-        """Get places information by ID in bulk"""
-        # get place info - filter None values
-        return [self.get_place_info(id) for id in places_id if id is not None]
+    # def _get_places_from_id(self, places_id: list[GooglePlaceID]) -> list[GooglePlace]:
+    #     """Get places information by ID in bulk"""
+    #     # get place info - filter None values
+    #     return [self.get_place_from_id(id) for id in places_id if id is not None]

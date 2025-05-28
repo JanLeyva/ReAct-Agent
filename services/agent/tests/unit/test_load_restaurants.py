@@ -30,9 +30,9 @@ def test_get_id_from_name(place_name: str):
         ),
     ],
 )
-def test_get_place_info(place_id: GooglePlaceID):
+def test_get_place_from_id(place_id: GooglePlaceID):
     """Get place from google maps API from name"""
-    response_place = gmaps_api.get_place_info(place_id)
+    response_place = gmaps_api.get_place_from_id(place_id)
 
     assert isinstance(response_place.place_id, str)
     assert isinstance(response_place.name, str)
@@ -140,10 +140,10 @@ def test_get_place_info(place_id: GooglePlaceID):
 )
 def test_get_full_place_info(google_place: GooglePlace):
     """
-    Get full place info: full_description, web_text,
+    Get full place info: description, web_text,
     summary_review
     """
     place = Place.get_place(google_place)
 
-    assert isinstance(place.full_description, str)
+    assert isinstance(place.description, str)
     assert isinstance(place, Place)

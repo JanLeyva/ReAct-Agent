@@ -455,7 +455,7 @@ class VectorStore:
             This function uses the current time for the UUID. To use a specific time,
             create a datetime object and use uuid_from_time(your_datetime).
         """
-        content = row["full_description"]
+        content = row["description"]
         if content:
             embedding = self.get_embedding(content)
             return pd.Series(
@@ -466,7 +466,7 @@ class VectorStore:
                         "place_id": row["place_id"],
                         "name": row["name"],
                         "url": row["url"],
-                        "full_description": row["full_description"],
+                        "description": row["description"],
                         "web_text": row["web_text"],
                         "summary_review": row["summary_review"],
                         "international_phone_number": row["international_phone_number"],
@@ -503,19 +503,19 @@ class VectorStore:
             where each row is a dictionary containing 'id', 'metadata', 'contents', and 'embedding'.
         """
 
-        # Ensure 'full_description' is Utf8 and handle potential None values
+        # Ensure 'description' is Utf8 and handle potential None values
         # by filling them with an empty string for embedding generation.
         # This prevents map_elements from failing on None.
         df_processed = df.with_columns(
-            pl.col("full_description")
+            pl.col("description")
             .cast(pl.Utf8)
             .fill_null("")
-            .alias("full_description_for_embedding")
+            .alias("description_for_embedding")
         )
         # 1. Generate 'embedding' column using map_elements
         #    This is necessary because self.get_embedding is a Python function.
         df_processed = df_processed.with_columns(
-            pl.col("full_description_for_embedding")
+            pl.col("description_for_embedding")
             .map_elements(
                 lambda content: self.get_embedding(content),
                 return_dtype=pl.List(
@@ -558,6 +558,6 @@ class VectorStore:
                 pl.col("id"),
                 metadata_struct,
                 pl.col("embedding"),
-                pl.col("full_description").alias("contents"),
+                pl.col("description").alias("contents"),
             ]
         ).select(["id", "metadata", "embedding", "contents"])

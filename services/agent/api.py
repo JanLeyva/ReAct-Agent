@@ -1,5 +1,5 @@
 # internal lib
-from src.services.load_restaurants.upload_place import UploadPlace
+from src.services.load_restaurants.upload_place import GetUploadPlace
 from src.services.agent.react_agent import ReActAgent
 from src.services.search_engine.vector_store import VectorStore
 from src.shared.llm.factory import llm
@@ -77,7 +77,7 @@ def upload_restaurant(place_name: str):
     """
     Upload restaurant to vector store
     """
-    UploadPlace().upload_places_by_name(place_name)
+    GetUploadPlace().get_upload_places_by_name(place_name)
     return {"message": f"Place '{place_name}' uploaded successfully."}
 
 

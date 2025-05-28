@@ -9,5 +9,5 @@ class PlacesAPI(ABC):
         pass
 
     @abstractmethod
-    def get_place_info(self) -> list[Place]:
+    def get_place_from_id(self) -> list[Place]:
         pass
