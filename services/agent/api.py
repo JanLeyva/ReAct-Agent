@@ -15,6 +15,7 @@ from loguru import logger
 
 agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
 app = FastAPI()
+vec = VectorStore()
 
 
 class TelegramMsg(BaseModel):
@@ -56,19 +57,17 @@ def get_agent_response(request: TelegramMsg):
     }
 
 
-@app.get("/search/query/")
+@app.post("/search/query/")
 def get_restaurants_from_query(query: SearchEngineQuery):
     """Search restaurant from query"""
-    results = VectorStore.semantic_search(query.query)
+    results = vec.semantic_search(query.query)
     return {"message": "OK", "results": results}
 
 
-@app.get("/search/query_coordinates/")
+@app.post("/search/query_coordinates/")
 def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     """Search restaurant from query and coordinates"""
-    results = VectorStore.semantic_search_with_filter(
-        query.query, query.long, query.lat
-    )
+    results = vec.semantic_search_with_filter(query.query, query.long, query.lat)
     return {"message": "OK", "results": results}
 
 

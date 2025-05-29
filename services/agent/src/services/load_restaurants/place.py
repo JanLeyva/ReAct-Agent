@@ -191,9 +191,7 @@ class Place(PlaceModel):
         # get full description from overview, web_text and summary_review
         full_description = cls.get_full_description(google_place_data)
 
-        description = (
-            cls.summary_description(full_description) if google_place.reviews else None
-        )
+        description = cls.summary_description(full_description)
         google_place_data["description"] = description
 
         return cls.model_validate(google_place_data)

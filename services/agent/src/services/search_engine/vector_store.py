@@ -1,17 +1,21 @@
-from loguru import logger
+# 1st party
 import time
 from datetime import datetime
 from typing import Any, List, Tuple, Union
 
+# internal libs
+from src.config import config
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+
+# 3rd party
+import vecs
 import cohere
 import time_uuid
 import pandas as pd
 import polars as pl
 import numpy as np
 import psycopg
-from src.config import config
-from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
-import vecs
+from loguru import logger
 
 
 class VectorStore:
@@ -66,7 +70,11 @@ class VectorStore:
 
     def create_index(self) -> None:
         """Create the StreamingDiskANN index to spseed up similarity search"""
-        self.vx_db.create_index(measure=vecs.IndexMeasure.cosine_distance)
+        self.vx_db.create_index(
+            measure=vecs.IndexMeasure.cosine_distance
+            # method=IndexMethod.hnsw,
+            # index_arguments=IndexArgsHNSW(m=8),
+        )
 
     def upsert(self, df: pl.DataFrame) -> None:
         """
@@ -90,7 +98,6 @@ class VectorStore:
         limit: int = 5,
         metadata_filter: Union[dict, List[dict]] = None,
         formatted: bool = True,
-        return_dataframe: bool = False,
     ) -> Union[List[Tuple[Any, ...]], pd.DataFrame]:
         """
         Query the vector database for similar embeddings based on input text.
@@ -108,7 +115,6 @@ class VectorStore:
                 - & is used to combine multiple predicates with AND operator.
                 - | is used to combine multiple predicates with OR operator.
             time_range: A tuple of (start_date, end_date) to filter results by time.
-            return_dataframe: Whether to return results as a DataFrame (default: True).
             formatted: Whether to return results as a formatted string (default: True).
 
         Returns:
@@ -144,56 +150,59 @@ class VectorStore:
         }
 
         if metadata_filter:
-            search_args["filter"] = metadata_filter
+            search_args["filters"] = metadata_filter
 
         results = self.vx_db.query(query_embedding, **search_args)
         elapsed_time = time.time() - start_time
 
         self._log_search_time("Vector", elapsed_time)
+        pl_results = self._create_dataframe_from_results(results)
+        if formatted:
+            return self._format_result_str(pl_results)
+
+        return pl_results
+
+    def semantic_search_with_filter(
+        self,
+        query: str,
+        long: float,
+        lat: float,
+        limit: int = 5,
+        formatted: bool = True,
+    ):
+        """
+        Query the vector database for similar embeddings based on input text and coordinates (long, lat).
+
+        Args:
+            query: The input text to search for.
+            long: The longitude coordinate.
+            lat: The latitude coordinate.
+            limit: The maximum number of results to return.
+            formatted: Whether to return results as a formatted string (default: True).
+
+        Returns:
+            Either a polars DataFrame containing the search results or a formatted string with the results.
+        """
+        # TODO: implement coordinates filtering <- square?
+        metadata_filter = {
+            "$and": [
+                {"long": {"$gte": long}},
+                {"lat": {"$lte": lat}},
+            ]
+        }
+
+        results = self.semantic_search(
+            query, metadata_filter=metadata_filter, limit=limit, formatted=False
+        )
 
         if formatted:
-            return self._format_result_str(self._create_dataframe_from_results(results))
-
-        if return_dataframe:
-            return self._create_dataframe_from_results(results)
+            return self._format_result_str(results)
         return results
-
-    # def semantic_search_with_filter(
-    #     self,
-    #     query: str,
-    #     long: float,
-    #     lat: float,
-    #     limit: int = 5,
-    #     formatted: bool = True,
-    # ):
-    #     """
-    #     Query the vector database for similar embeddings based on input text and coordinates (long, lat).
-
-    #     Args:
-    #         query: The input text to search for.
-    #         long: The longitude coordinate.
-    #         lat: The latitude coordinate.
-    #         limit: The maximum number of results to return.
-    #         formatted: Whether to return results as a formatted string (default: True).
-
-    #     Returns:
-    #         Either a list of tuples or a pandas DataFrame containing the search results or a formatted string with the results.
-    #     """
-    #     # TODO: implement coordinates filtering <- square?
-    #     metadata_filter = Predicates(
-    #         Predicates(("long", ">=", long)), Predicates(("lat", "<=", lat))
-    #     )
-
-    #     results = self.semantic_search(query, predicates=metadata_filter, limit=limit)
-
-    #     if formatted:
-    #         return self._format_result_str(results)
-    #     return results
 
     def _create_dataframe_from_results(
         self,
         results: List[Tuple[Any, ...]],
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Create a pandas DataFrame from the search results.
 
@@ -204,21 +213,15 @@ class VectorStore:
             A pandas DataFrame containing the formatted search results.
         """
         # Convert results to DataFrame
-        df = pd.DataFrame(
-            results, columns=["id", "metadata", "content", "embedding", "distance"]
-        )
+        df = pl.DataFrame(results, schema={"id": str, "metadata": None})
+        # actually metadata is a pl -> struct[12]
 
         # Expand metadata column
-        df = pd.concat(
-            [df.drop(["metadata"], axis=1), df["metadata"].apply(pd.Series)], axis=1
-        )
-
-        # Convert id to string for better readability
-        df["id"] = df["id"].astype(str)
+        df = df.unnest("metadata")
 
         return df
 
-    def _format_result_str(self, results: pd.DataFrame) -> str:
+    def _format_result_str(self, results: pl.DataFrame) -> str:
         """
         Format the search results into a string for display.
 
@@ -228,13 +231,12 @@ class VectorStore:
         Returns:
             A formatted string representation of the search results.
         """
-        # TODO implement this function
         template = "{idx}: {name}: {description}\n"
         result_formatted = [
             template.format(
-                idx=idx + 1, name=place["name"], description=place["content"]
+                idx=idx + 1, name=place["name"], description=place["contents"]
             )
-            for idx, (_, place) in enumerate(results.iterrows())
+            for idx, place in enumerate(results.iter_rows(named=True))
         ]
 
         return "".join(result_formatted)
@@ -331,7 +333,7 @@ class VectorStore:
         self._log_search_time("Keyword", elapsed_time)
 
         if return_dataframe:
-            df = pd.DataFrame(results, columns=["id", "content", "rank"])
+            df = pd.DataFrame(results, columns=["id", "contents", "rank"])
             df["id"] = df["id"].astype(str)
             return df
         return results
@@ -343,7 +345,7 @@ class VectorStore:
         semantic_k: int = 5,
         rerank: bool = False,
         top_n: int = 5,
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Perform a hybrid search combining keyword and semantic search results,
         with optional reranking using Cohere.
@@ -356,7 +358,7 @@ class VectorStore:
             top_n: The number of top results to return after reranking. Defaults to 5.
 
         Returns:
-            A pandas DataFrame containing the combined search results with a 'search_type' column.
+            A polars DataFrame containing the combined search results with a 'search_type' column.
 
         Example:
             results = vector_store.hybrid_search("shipping options", keyword_k=3, semantic_k=3, rerank=True, top_n=5)
@@ -366,14 +368,14 @@ class VectorStore:
             query, limit=keyword_k, return_dataframe=True
         )
         keyword_results["search_type"] = "keyword"
-        keyword_results = keyword_results[["id", "content", "search_type"]]
+        keyword_results = keyword_results[["id", "contents", "search_type"]]
 
         # Perform semantic search
         semantic_results = self.semantic_search(
             query, limit=semantic_k, return_dataframe=True
         )
         semantic_results["search_type"] = "semantic"
-        semantic_results = semantic_results[["id", "content", "search_type"]]
+        semantic_results = semantic_results[["id", "contents", "search_type"]]
 
         # Combine results
         combined_results = pd.concat(
@@ -405,7 +407,7 @@ class VectorStore:
         rerank_results = self.cohere_client.v2.rerank(
             model="rerank-english-v3.0",
             query=query,
-            documents=combined_results["content"].tolist(),
+            documents=combined_results["contents"].tolist(),
             top_n=top_n,
             return_documents=True,
         )
@@ -414,7 +416,7 @@ class VectorStore:
             [
                 {
                     "id": combined_results.iloc[result.index]["id"],
-                    "content": result.document,
+                    "contents": result.document,
                     "search_type": combined_results.iloc[result.index]["search_type"],
                     "relevance_score": result.relevance_score,
                 }
@@ -423,55 +425,6 @@ class VectorStore:
         )
 
         return reranked_df.sort_values("relevance_score", ascending=False)
-
-    def prepare_record(self, row) -> pd.Series:
-        """Prepare a record for insertion into the vector store.
-
-        Args:
-            row (pandas.Series): A row from the dataset containing an 'article' column.
-
-        Returns:
-            pandas.Series: A series containing the prepared record for insertion.
-
-        Note:
-            This function uses the current time for the UUID. To use a specific time,
-            create a datetime object and use uuid_from_time(your_datetime).
-        """
-        content = row["description"]
-        if content:
-            embedding = self.get_embedding(content)
-            return pd.Series(
-                {
-                    "id": str(time_uuid.TimeUUID.with_utc(time_uuid.utctime())),
-                    "metadata": {
-                        "created_at": datetime.now().isoformat(),
-                        "place_id": row["place_id"],
-                        "name": row["name"],
-                        "url": row["url"],
-                        "description": row["description"],
-                        "web_text": row["web_text"],
-                        "summary_review": row["summary_review"],
-                        "international_phone_number": row["international_phone_number"],
-                        "formatted_address": row["formatted_address"],
-                        "website": row["website"],
-                        "long": row["geometry"][0],
-                        "lat": row["geometry"][1],
-                        "price_level": row["price_level"],
-                        "reservable": row["reservable"],
-                        "delivery": row["delivery"],
-                        "dine_in": row["dine_in"],
-                        "wheelchair_accessible_entrance": row[
-                            "wheelchair_accessible_entrance"
-                        ],
-                        "serves_breakfast": row["serves_breakfast"],
-                        "serves_brunch": row["serves_brunch"],
-                        "takeout": row["takeout"],
-                    },
-                    "contents": content,
-                    "embedding": embedding,
-                }
-            )
-        return None
 
     def process_data_for_vector_db(self, df: pl.DataFrame) -> pl.DataFrame:
         """
