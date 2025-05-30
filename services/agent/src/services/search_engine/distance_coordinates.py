@@ -1,21 +1,17 @@
-import math
-
-# useful links
+# Naive implementation of square around a point. Base on <= point 1 >= point 3
+# Useful links
 # https://stackoverflow.com/questions/4000886/gps-coordinates-1km-square-around-a-point
 # https://math.stackexchange.com/questions/256931/draw-a-square-around-a-point
 
+import math
+
 
 def calculate_square_corners(
-    latitude: float, longitude: float, side: float = 1000
+    latitude: float, longitude: float, side: float
 ) -> list[tuple[float, float]]:
     """
-    Translates C# code to Python to calculate the four corners of a square
-    around a given central latitude and longitude.
-
-    Note: The original C# logic for calculating `lineOfLat` using `Math.Cos(longitude)`
-    appears to be a potential mathematical error for geographical calculations.
-    It should typically use `math.cos(latitude)` when calculating circumference
-    along a parallel of latitude. This translation keeps the original logic intact.
+    Calculates the four corners of a square around a central latitude/longitude point
+    with geographically more accurate calculations (assuming a spherical Earth).
 
     Args:
         latitude (float): Central latitude in degrees.
@@ -27,73 +23,87 @@ def calculate_square_corners(
                                    representing the corners of the square, in degrees.
     """
 
+    # Approximate equatorial circumference in km
+    EARTH_EQUATORIAL_CIRCUMFERENCE_KM = 40075.0  
+    METERS_PER_KM = 1000.0
+    DEGREES_PER_CIRCLE = 360.0
+
+    # For latitude, 1 degree is roughly constant (approx 111.32 km or 111320 meters)
+    # 40075 km / 360 degrees = 111.3194 km/degree
+    KM_PER_DEGREE_LATITUDE = EARTH_EQUATORIAL_CIRCUMFERENCE_KM / DEGREES_PER_CIRCLE
+
     # Converting degrees to radians
-    lat_in_decimals = math.radians(latitude)  # Using math.radians for clarity
-    long_in_decimals = math.radians(longitude)  # Using math.radians for clarity
+    lat_in_radians = math.radians(latitude)
+    long_in_radians = math.radians(longitude)
 
-    # Equivalent to List<string> lstStrCoords = new List<string>();
-    # This list is declared in C# but not used in the provided snippet.
-    # If it's meant to store results, the return type should be adjusted.
-    # For now, it's omitted as unused in the calculation logic.
+    # --- Corrected Geographical Calculations ---
 
-    change_in_lat: float
-    change_in_long: float
-    line_of_lat: float
+    # 1. Calculate the change in Latitude for a given distance 'side' (in degrees)
+    # This is constant regardless of longitude.
+    # (side / METERS_PER_KM) converts side from meters to kilometers.
+    # Then divide by km_per_degree_latitude to get degrees.
+    delta_lat_degrees = (side / METERS_PER_KM) / KM_PER_DEGREE_LATITUDE
 
-    # Calculating change in longitude for square of side 'side' (in meters)
-    # 40075 km is approx Earth's equatorial circumference.
-    # (side / 1000) converts meters to kilometers.
-    change_in_long = (side / 1000) * (360.0 / 40075)
+    # 2. Calculate the circumference of the Earth at the given latitude
+    # This is crucial for calculating the change in longitude accurately.
+    # Circumference at latitude = Equatorial Circumference * cos(latitude_in_radians)
+    circumference_at_latitude = EARTH_EQUATORIAL_CIRCUMFERENCE_KM * math.cos(
+        lat_in_radians
+    )
 
-    # Calculating length of longitude at that point of latitude
-    # WARNING: Original C# uses `longitude` for Math.Cos, which is likely a bug.
-    # For a parallel of latitude's circumference, it should be `latitude`.
-    # Translating literally based on C# code.
-    line_of_lat = math.cos(long_in_decimals) * 40075  # C# used Math.Cos(longitude)
-    # where longitude was in degrees,
-    # but math.cos expects radians.
-    # So it must be `long_in_decimals`.
-
-    # Calculating change in latitude for square of side 'side'
-    # This assumes line_of_lat is a circumference along which a `side` distance
-    # corresponds to `change_in_lat` degrees.
-    if line_of_lat == 0:
-        # This occurs if long_in_decimals is +/- PI/2 (e.g., longitude 90 or -90 degrees).
-        # In this specific scenario, division by zero would occur.
-        # Handling it by setting change_in_lat to 0, or you might want to raise an error
-        # or return a specific value depending on desired behavior for such edge cases.
-        # For a direct translation, floating point division might yield 'inf' or 'NaN'.
-        change_in_lat = (
-            0.0  # Or handle as an error if this state is invalid for your application
-        )
+    # Handle potential division by zero if close to poles (latitude +/-90 degrees)
+    # where cos(lat_in_radians) would be 0 or very close to 0.
+    # If at a pole, all longitudes converge, so a change in longitude is ill-defined.
+    if circumference_at_latitude == 0:
+        # At poles, longitude becomes meaningless for defining a square.
+        # For a direct translation, we'll set delta_long_degrees to 0,
+        # or you might want to raise an error depending on desired behavior.
+        delta_long_degrees = 0.0
     else:
-        change_in_lat = (side / 1000) * (360.0 / line_of_lat)
+        # Calculate the change in Longitude for a given distance 'side' (in degrees)
+        # This varies significantly with latitude.
+        # (side / METERS_PER_KM) converts side from meters to kilometers.
+        # Then divide by km_per_degree_longitude_at_this_latitude
+        km_per_degree_longitude_at_this_latitude = (
+            circumference_at_latitude / DEGREES_PER_CIRCLE
+        )
+        delta_long_degrees = (
+            side / METERS_PER_KM
+        ) / km_per_degree_longitude_at_this_latitude
 
-    # Converting changes into radians
-    change_in_lat = math.radians(change_in_lat)
-    change_in_long = math.radians(change_in_long)
+    # --- Convert deltas back to radians for calculation ---
+    delta_lat_radians = math.radians(delta_lat_degrees)
+    delta_long_radians = math.radians(delta_long_degrees)
 
-    # Calculate offsets for the four corners
-    # (Math.Sqrt(2) / 2) is equivalent to 1 / sqrt(2) or cos(45 degrees) / sin(45 degrees)
-    n_lat = change_in_lat * (math.sqrt(2) / 2)
-    n_long = change_in_long * (math.sqrt(2) / 2)
+    # --- Calculate offsets for a square rotated by 45 degrees ---
+    # The (Math.Sqrt(2) / 2) factor comes from the diagonal of a square.
+    # If 'side' is the length of the square's side, then the distance from center
+    # to a corner along a cardinal direction (N/S/E/W) is side / sqrt(2).
+    # This is `side * (sqrt(2) / 2)`.
+    # These `n_lat` and `n_long` represent the half-diagonal offsets.
+    half_diagonal_factor = math.sqrt(2) / 2
 
-    # Calculate corner coordinates in radians
-    coord_lat1 = lat_in_decimals + n_lat
-    coord_long1 = long_in_decimals + n_long
+    n_lat_offset = delta_lat_radians * half_diagonal_factor
+    n_long_offset = delta_long_radians * half_diagonal_factor
 
-    coord_lat3 = lat_in_decimals - n_lat
-    coord_long3 = long_in_decimals - n_long
+    # --- Calculate four corner coordinates in radians ---
+    # The original C# logic appears to define the corners in a specific order
+    # based on these offsets.
+    coord_lat1_rad = lat_in_radians + n_lat_offset
+    coord_long1_rad = long_in_radians + n_long_offset
 
-    # Converting coords back to degrees
-    coord_lat1 = math.degrees(coord_lat1)
-    coord_lat3 = math.degrees(coord_lat3)
+    coord_lat3_rad = lat_in_radians - n_lat_offset
+    coord_long3_rad = long_in_radians - n_long_offset
 
-    coord_long1 = math.degrees(coord_long1)
-    coord_long3 = math.degrees(coord_long3)
+    # --- Convert corner coordinates back to degrees ---
+    coord_lat1_deg = math.degrees(coord_lat1_rad)
+    coord_long1_deg = math.degrees(coord_long1_rad)
 
-    # Returning the coordinates as a list of (latitude, longitude) tuples
+    coord_lat3_deg = math.degrees(coord_lat3_rad)
+    coord_long3_deg = math.degrees(coord_long3_rad)
+
+    # Return the coordinates as a list of (latitude, longitude) tuples
     return [
-        (coord_lat1, coord_long1),
-        (coord_lat3, coord_long3),
+        (coord_lat1_deg, coord_long1_deg),
+        (coord_lat3_deg, coord_long3_deg),
     ]

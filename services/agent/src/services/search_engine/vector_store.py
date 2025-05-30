@@ -157,6 +157,11 @@ class VectorStore:
         elapsed_time = time.time() - start_time
 
         self._log_search_time("Vector", elapsed_time)
+
+        if not results:
+            # raise NoResultsFoundInVectorDB("No results for the search with metadata (coordinates).")
+            return "No Results where found for your localization"
+
         pl_results = self._create_dataframe_from_results(results)
         if formatted:
             return self._format_result_str(pl_results)
@@ -184,16 +189,16 @@ class VectorStore:
         Returns:
             Either a polars DataFrame containing the search results or a formatted string with the results.
         """
-        # TODO: implement coordinates filtering <- square?
-        coordinates_left_top, coordinates_right_bottom = calculate_square_corners(
+        # calculate the square around a point
+        coordinates_right, coordinates_left = calculate_square_corners(
             latitude=lat, longitude=long, side=1000
         )
         metadata_filter = {
             "$and": [
-                {"lat": {"$lte": lat}},
-                {"long": {"$gte": long}},
-                {"lat": {"$lte": lat}},
-                {"long": {"$gte": long}},
+                {"lat": {"$lte": coordinates_right[0]}},
+                {"long": {"$lte": coordinates_right[1]}},
+                {"lat": {"$gte": coordinates_left[0]}},
+                {"long": {"$gte": coordinates_left[1]}},
             ]
         }
 
@@ -201,7 +206,7 @@ class VectorStore:
             query, metadata_filter=metadata_filter, limit=limit, formatted=False
         )
 
-        if formatted:
+        if formatted and isinstance(results, pl.DataFrame):
             return self._format_result_str(results)
         return results
 
