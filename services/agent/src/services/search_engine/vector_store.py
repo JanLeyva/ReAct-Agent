@@ -5,7 +5,7 @@ from typing import Any, List, Tuple, Union
 
 # internal libs
 from src.config import config
-from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from src.services.search_engine.distance_coordinates import calculate_square_corners
 
 # 3rd party
 import vecs
@@ -16,6 +16,7 @@ import polars as pl
 import numpy as np
 import psycopg
 from loguru import logger
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 
 
 class VectorStore:
@@ -184,10 +185,15 @@ class VectorStore:
             Either a polars DataFrame containing the search results or a formatted string with the results.
         """
         # TODO: implement coordinates filtering <- square?
+        coordinates_left_top, coordinates_right_bottom = calculate_square_corners(
+            latitude=lat, longitude=long, side=1000
+        )
         metadata_filter = {
             "$and": [
+                {"lat": {"$lte": lat}},
                 {"long": {"$gte": long}},
                 {"lat": {"$lte": lat}},
+                {"long": {"$gte": long}},
             ]
         }
 

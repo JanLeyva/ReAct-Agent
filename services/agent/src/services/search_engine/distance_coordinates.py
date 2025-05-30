@@ -82,57 +82,18 @@ def calculate_square_corners(
     coord_lat1 = lat_in_decimals + n_lat
     coord_long1 = long_in_decimals + n_long
 
-    coord_lat2 = lat_in_decimals + n_lat
-    coord_long2 = long_in_decimals - n_long
-
     coord_lat3 = lat_in_decimals - n_lat
     coord_long3 = long_in_decimals - n_long
 
-    coord_lat4 = lat_in_decimals - n_lat
-    coord_long4 = long_in_decimals + n_long
-
     # Converting coords back to degrees
     coord_lat1 = math.degrees(coord_lat1)
-    coord_lat2 = math.degrees(coord_lat2)
     coord_lat3 = math.degrees(coord_lat3)
-    coord_lat4 = math.degrees(coord_lat4)
 
     coord_long1 = math.degrees(coord_long1)
-    coord_long2 = math.degrees(coord_long2)
     coord_long3 = math.degrees(coord_long3)
-    coord_long4 = math.degrees(coord_long4)
 
     # Returning the coordinates as a list of (latitude, longitude) tuples
     return [
         (coord_lat1, coord_long1),
-        (coord_lat2, coord_long2),
         (coord_lat3, coord_long3),
-        (coord_lat4, coord_long4),
     ]
-
-
-# Example Usage:
-# Assume latitude = 48.1351 (Munich) and longitude = 11.5820 (Munich)
-# Assume side = 1000 meters (1 km)
-latitude_ex = 41.40543946577699
-longitude_ex = 2.174160275086914
-side_ex = 1000  # meters
-
-corners = calculate_square_corners(latitude_ex, longitude_ex, side_ex)
-
-print(f"Original Latitude: {latitude_ex}, Longitude: {longitude_ex}")
-print(f"Side Length: {side_ex} meters")
-print("\nCalculated Corners (Latitude, Longitude):")
-for i, (lat, long) in enumerate(corners):
-    print(f"  Corner {i+1}: ({lat:.6f}, {long:.6f})")
-
-# Test with a problematic longitude (where cos(longitude) is 0)
-# For example, if longitude is 90 degrees or -90 degrees.
-# This will trigger the `line_of_lat == 0` handling.
-# latitude_problem_test = 0.0
-# longitude_problem_test = 90.0
-# side_problem_test = 1000
-# corners_problem = calculate_square_corners(latitude_problem_test, longitude_problem_test, side_problem_test)
-# print(f"\n--- Test with problematic Longitude (Lat: {latitude_problem_test}, Long: {longitude_problem_test}) ---")
-# for i, (lat, long) in enumerate(corners_problem):
-#     print(f"  Corner {i+1}: ({lat:.6f}, {long:.6f})")
