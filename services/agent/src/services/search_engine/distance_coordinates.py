@@ -24,7 +24,7 @@ def calculate_square_corners(
     """
 
     # Approximate equatorial circumference in km
-    EARTH_EQUATORIAL_CIRCUMFERENCE_KM = 40075.0  
+    EARTH_EQUATORIAL_CIRCUMFERENCE_KM = 40075.0
     METERS_PER_KM = 1000.0
     DEGREES_PER_CIRCLE = 360.0
 
