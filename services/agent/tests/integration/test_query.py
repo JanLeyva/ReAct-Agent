@@ -9,13 +9,13 @@ client = TestClient(app)
 
 
 @pytest.mark.parametrize(
-    ("query", "lat", "long"),
+    ("query", "chat_id"),
     [
-        ("Search a japanes restaurant around sagrada familia.", 123),
-        ("recomend me an italian restaurant near passeig de gracia", 456),
+        ("Search a japanes restaurant", 123),
+        ("recomend me an italian restaurant", 456),
     ],
 )
-def test_telegram_post(query, chat_id):
+def test_telegram_query_coordinates(query, chat_id):
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
@@ -26,3 +26,4 @@ def test_telegram_post(query, chat_id):
     assert isinstance(body.get("response", {}), str)
     assert isinstance(body.get("chat_id", {}), int)
     assert isinstance(body.get("timestamp", {}), float)
+    assert "restaurant" in body.get("response", {})  # ?

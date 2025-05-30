@@ -88,6 +88,7 @@ def test_search_engine_query_coordinates_no_results_api(query, lat, long):
     assert isinstance(body.get("response", {}), dict)
 
 
+# TODO uncomment test_search_engine_query_coordinates when we fill the db
 # @pytest.mark.parametrize(
 #     ("query", "lat", "long"),
 #     [

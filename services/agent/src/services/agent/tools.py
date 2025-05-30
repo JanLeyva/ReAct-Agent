@@ -36,14 +36,15 @@ def get_restaurant_recommendation_from_text(
     return vec.semantic_search(text)
 
 
-def get_restaurant_recommendation_from_just_coordinates(
-    coordinates: Annotated[
-        list, "Longitute and Latitue of user such as (41.387535, 2.175552)"
-    ],
-) -> str:
-    """Useful for getting restaurants recommendations just using coordinates no any other information"""
-    logger.info("get_restaurant_recommendation_from_coordinates")
-    return "Restaurant Shunka"
+# TODO dev the function
+# def get_restaurant_recommendation_from_just_coordinates(
+#     coordinates: Annotated[
+#         list, "Longitute and Latitue of user such as (41.387535, 2.175552)"
+#     ],
+# ) -> str:
+#     """Useful for getting restaurants recommendations just using coordinates no any other information"""
+#     logger.info("get_restaurant_recommendation_from_coordinates")
+#     return "Restaurant Shunka"
 
 
 def get_coordinates_from_street(
@@ -55,7 +56,7 @@ def get_coordinates_from_street(
 
 tools = [
     FunctionTool.from_defaults(get_restaurant_recommendation_from_text),
-    FunctionTool.from_defaults(get_restaurant_recommendation_from_just_coordinates),
+    # FunctionTool.from_defaults(get_restaurant_recommendation_from_just_coordinates),
     FunctionTool.from_defaults(get_restaurant_recommendation_from_text_and_coordinates),
     FunctionTool.from_defaults(get_coordinates_from_street),
 ]
