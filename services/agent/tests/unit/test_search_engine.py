@@ -39,19 +39,19 @@ def test_search_engine_query_coordinates_no_results(query, long, lat):
 
 
 # TODO uncomment test_search_engine_query_coordinates when we fill the db
-# @pytest.mark.parametrize(
-#     ("query", "lat", "long"),
-#     [
-#         ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
-#         ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
-#     ],
-# )
-# def test_search_engine_query_coordinates(query, long, lat):
-#     result = vec.semantic_search_with_filter(query, long, lat)
+@pytest.mark.parametrize(
+    ("query", "lat", "long"),
+    [
+        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
+        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
+    ],
+)
+def test_search_engine_query_coordinates(query, long, lat):
+    result = vec.semantic_search_with_filter(query, long, lat)
 
-#     assert len(result) > 0
-#     assert isinstance(result, str)
-#     assert result[0] == "1"
+    assert len(result) > 0
+    assert isinstance(result, str)
+    # assert result[0] == "1"
 
 
 # API
@@ -67,7 +67,7 @@ def test_search_engine_api(query):
     response = client.post("/search/query/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
-    assert isinstance(body.get("response", {}), dict)
+    assert isinstance(body.get("response"), str)
 
 
 @pytest.mark.parametrize(
@@ -85,23 +85,25 @@ def test_search_engine_query_coordinates_no_results_api(query, lat, long):
     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
-    assert isinstance(body.get("response", {}), dict)
+    assert isinstance(body.get("response"), str)
+    assert body.get("response") == "No Results where found for your localization"
 
 
 # TODO uncomment test_search_engine_query_coordinates when we fill the db
-# @pytest.mark.parametrize(
-#     ("query", "lat", "long"),
-#     [
-#         ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
-#         ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
-#     ],
-# )
-# def test_search_engine_query_coordinates_api(query, lat, long):
-#     # Prepare the headers
-#     headers = {"accept": "application/json", "Content-Type": "application/json"}
-#     # Prepare the JSON payload
-#     payload = {"query": query, "long": long, "lat": lat}
-#     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
-#     assert response.status_code == 200
-#     body = response.json()
-#     assert isinstance(body.get("response", {}), dict)
+@pytest.mark.parametrize(
+    ("query", "lat", "long"),
+    [
+        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
+        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
+    ],
+)
+def test_search_engine_query_coordinates_api(query, lat, long):
+    # Prepare the headers
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    # Prepare the JSON payload
+    payload = {"query": query, "long": long, "lat": lat}
+    response = client.post("/search/query_coordinates/", json=payload, headers=headers)
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body.get("response"), str)
+    assert len(body.get("response")) >= 20

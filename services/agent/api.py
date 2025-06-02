@@ -61,14 +61,14 @@ def get_agent_response(request: TelegramMsg):
 def get_restaurants_from_query(query: SearchEngineQuery):
     """Search restaurant from query"""
     results = vec.semantic_search(query.query)
-    return {"message": "OK", "results": results}
+    return {"message": "OK", "response": results}
 
 
 @app.post("/search/query_coordinates/")
 def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     """Search restaurant from query and coordinates"""
     results = vec.semantic_search_with_filter(query.query, query.long, query.lat)
-    return {"message": "OK", "results": results}
+    return {"message": "OK", "response": results}
 
 
 @app.post("/upload/restaurant/{place_name}")

@@ -23,7 +23,6 @@ def test_telegram_query_coordinates(query, chat_id):
     response = client.post("/generate/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
-    assert isinstance(body.get("response", {}), str)
-    assert isinstance(body.get("chat_id", {}), int)
-    assert isinstance(body.get("timestamp", {}), float)
-    assert "restaurant" in body.get("response", {})  # ?
+    assert isinstance(body.get("response"), str)
+    assert isinstance(body.get("chat_id"), int)
+    assert isinstance(body.get("timestamp"), float)
