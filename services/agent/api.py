@@ -68,7 +68,9 @@ def get_restaurants_from_query(query: SearchEngineQuery):
 @app.post("/search/query_coordinates/")
 def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
     """Search restaurant from query and coordinates"""
-    results = vec.semantic_search_with_filter(query.query, query.long, query.lat, query.distance)
+    results = vec.semantic_search_with_filter(
+        query.query, query.long, query.lat, query.distance
+    )
     return {"message": "OK", "response": results}
 
 

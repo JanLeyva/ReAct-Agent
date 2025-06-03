@@ -27,7 +27,12 @@ def test_search_engine(query):
     ("query", "lat", "long", "distance"),
     [
         ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979, 1000),
-        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979, 2000),
+        (
+            "recomend me an italian restaurant",
+            31.25093516863868,
+            121.48219755115979,
+            2000,
+        ),
     ],
 )
 def test_search_engine_query_coordinates_no_results(query, long, lat, distance):
@@ -43,7 +48,12 @@ def test_search_engine_query_coordinates_no_results(query, long, lat, distance):
     ("query", "lat", "long", "distance"),
     [
         ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867, 1000),
-        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276, 2000),
+        (
+            "recomend me an italian restaurant",
+            41.3923748496093,
+            2.165014450939276,
+            2000,
+        ),
     ],
 )
 def test_search_engine_query_coordinates(query, long, lat, distance):
@@ -74,7 +84,12 @@ def test_search_engine_api(query):
     ("query", "lat", "long", "distance"),
     [
         ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979, 1000),
-        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979, 2000),
+        (
+            "recomend me an italian restaurant",
+            31.25093516863868,
+            121.48219755115979,
+            2000,
+        ),
     ],
 )
 def test_search_engine_query_coordinates_no_results_api(query, lat, long, distance):
@@ -94,7 +109,12 @@ def test_search_engine_query_coordinates_no_results_api(query, lat, long, distan
     ("query", "lat", "long", "distance"),
     [
         ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867, 1000),
-        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276, 2000),
+        (
+            "recomend me an italian restaurant",
+            41.3923748496093,
+            2.165014450939276,
+            2000,
+        ),
     ],
 )
 def test_search_engine_query_coordinates_api(query, lat, long, distance):
