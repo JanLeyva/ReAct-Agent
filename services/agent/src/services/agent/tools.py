@@ -19,15 +19,22 @@ def get_restaurant_recommendation_from_text_and_coordinates(
     coordinates: Annotated[
         list, "Longitute and Latitue of user such as (41.387535, 2.175552)"
     ],
+    distance: Annotated[
+        int,
+        "The search distance in meters around the central point. Start with 1000; if no results are found, increment to 2000, then 3000",
+    ],
 ) -> str:
     """Useful for getting restaurants recommendations base on user request and coordinates
 
     Args:
         text (str): user preferences for the restaurant. All relevant information.
-        coordinates(list): Longitute and Latitue of user such as (41.387535, 2.175552), usually we get this from `get_coordinates_from_street`tool.
+        coordinates(list): Longitute and Latitue of user such as (41.387535, 2.175552), usually we get this from `get_coordinates_from_street` tool.
+        distance (int): The search distance in meters around the central point. Start with 1000; if no results are found, increment to 2000, then 3000.
     """
     logger.info("get_restaurant_recommendation_from_text_coordinates")
-    return vec.semantic_search_with_filter(text, coordinates[0], coordinates[1])
+    return vec.semantic_search_with_filter(
+        text, coordinates[0], coordinates[1], distance
+    )
 
 
 def get_restaurant_recommendation_from_text(

@@ -173,6 +173,7 @@ class VectorStore:
         query: str,
         long: float,
         lat: float,
+        side: int = 1000,
         limit: int = 5,
         formatted: bool = True,
     ):
@@ -183,6 +184,7 @@ class VectorStore:
             query: The input text to search for.
             long: The longitude coordinate.
             lat: The latitude coordinate.
+            side: The square longitude around the point.
             limit: The maximum number of results to return.
             formatted: Whether to return results as a formatted string (default: True).
 
@@ -191,7 +193,7 @@ class VectorStore:
         """
         # calculate the square around a point
         coordinates_right, coordinates_left = calculate_square_corners(
-            latitude=lat, longitude=long, side=1000
+            latitude=lat, longitude=long, side=side
         )
         metadata_filter = {
             "$and": [

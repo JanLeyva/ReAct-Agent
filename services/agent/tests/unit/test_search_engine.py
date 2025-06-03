@@ -24,14 +24,14 @@ def test_search_engine(query):
 
 
 @pytest.mark.parametrize(
-    ("query", "lat", "long"),
+    ("query", "lat", "long", "distance"),
     [
-        ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979),
-        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979),
+        ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979, 1000),
+        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979, 2000),
     ],
 )
-def test_search_engine_query_coordinates_no_results(query, long, lat):
-    result = vec.semantic_search_with_filter(query, long, lat)
+def test_search_engine_query_coordinates_no_results(query, long, lat, distance):
+    result = vec.semantic_search_with_filter(query, long, lat, distance)
 
     assert len(result) > 0
     assert isinstance(result, str)
@@ -40,14 +40,14 @@ def test_search_engine_query_coordinates_no_results(query, long, lat):
 
 # TODO uncomment test_search_engine_query_coordinates when we fill the db
 @pytest.mark.parametrize(
-    ("query", "lat", "long"),
+    ("query", "lat", "long", "distance"),
     [
-        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
-        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
+        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867, 1000),
+        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276, 2000),
     ],
 )
-def test_search_engine_query_coordinates(query, long, lat):
-    result = vec.semantic_search_with_filter(query, long, lat)
+def test_search_engine_query_coordinates(query, long, lat, distance):
+    result = vec.semantic_search_with_filter(query, long, lat, distance)
 
     assert len(result) > 0
     assert isinstance(result, str)
@@ -71,17 +71,17 @@ def test_search_engine_api(query):
 
 
 @pytest.mark.parametrize(
-    ("query", "lat", "long"),
+    ("query", "lat", "long", "distance"),
     [
-        ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979),
-        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979),
+        ("Search a japanes restaurant", 31.25093516863868, 121.48219755115979, 1000),
+        ("recomend me an italian restaurant", 31.25093516863868, 121.48219755115979, 2000),
     ],
 )
-def test_search_engine_query_coordinates_no_results_api(query, lat, long):
+def test_search_engine_query_coordinates_no_results_api(query, lat, long, distance):
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
-    payload = {"query": query, "long": long, "lat": lat}
+    payload = {"query": query, "long": long, "lat": lat, "distance": distance}
     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
@@ -91,17 +91,17 @@ def test_search_engine_query_coordinates_no_results_api(query, lat, long):
 
 # TODO uncomment test_search_engine_query_coordinates when we fill the db
 @pytest.mark.parametrize(
-    ("query", "lat", "long"),
+    ("query", "lat", "long", "distance"),
     [
-        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867),
-        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276),
+        ("Search a japanes restaurant", 41.40756379142826, 2.1724575744522867, 1000),
+        ("recomend me an italian restaurant", 41.3923748496093, 2.165014450939276, 2000),
     ],
 )
-def test_search_engine_query_coordinates_api(query, lat, long):
+def test_search_engine_query_coordinates_api(query, lat, long, distance):
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
-    payload = {"query": query, "long": long, "lat": lat}
+    payload = {"query": query, "long": long, "lat": lat, "distance": distance}
     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
