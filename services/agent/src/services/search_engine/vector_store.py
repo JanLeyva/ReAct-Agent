@@ -171,8 +171,8 @@ class VectorStore:
     def semantic_search_with_filter(
         self,
         query: str,
-        long: float,
         lat: float,
+        long: float,
         side: int = 1000,
         limit: int = 5,
         formatted: bool = True,
