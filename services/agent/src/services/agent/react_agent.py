@@ -2,6 +2,8 @@
 from typing import Any, List
 import os
 
+from pydantic import PrivateAttr
+
 # internal libs
 from src.config import config
 from src.shared.templates.prompts import (
@@ -91,6 +93,24 @@ class ToolCallEvent(Event):
 
 class FunctionOutputEvent(Event):
     output: ToolOutput
+
+
+class AgentAnswer(Event):
+    """EndEvent signals the workflow to stop."""
+
+    _result: Any = PrivateAttr(default=None)
+
+    def __init__(self, result: Any = None, **kwargs: Any) -> None:
+        # forces the user to provide a result
+        super().__init__(_result=result, **kwargs)
+
+    def _get_result(self) -> Any:
+        """This can be overridden by subclasses to return the desired result."""
+        return self._result
+
+    @property
+    def result(self) -> Any:
+        return self._get_result()
 
 
 class ReActAgent(Workflow):
@@ -184,7 +204,7 @@ class ReActAgent(Workflow):
     @step
     async def handle_llm_input(
         self, ctx: Context, ev: HistEvent
-    ) -> ToolCallEvent | StopEvent:
+    ) -> ToolCallEvent | AgentAnswer:
         chat_history = ev.input
         current_reasoning = await ctx.get("current_reasoning", default=[])
 
@@ -203,8 +223,8 @@ class ReActAgent(Workflow):
                 await ctx.set("current_reasoning", current_reasoning)
 
                 sources = await ctx.get("sources", default=[])
-
-                return StopEvent(
+                # TODO change this to an object to be modified -> AgentStop <- then format the output as we wish
+                return AgentAnswer(
                     result={
                         "response": reasoning_step.response,
                         "sources": [sources],
@@ -281,9 +301,33 @@ class ReActAgent(Workflow):
             ChatMessage(content=ANSWER_PROMPT, role=MessageRole.SYSTEM)
         ] + ev.memory_msg
         response = self.llm.chat(input_llm)
-
-        logger.info(response)
+        if self._verbose:
+            logger.info(response)
         return StopEvent(result={"response": response.message.content})
+
+    @step
+    async def answer_agent(self, ev: AgentAnswer) -> StopEvent:
+        """Format agent answer after use tools avaiable and get a proper answer"""
+        # format the tool output
+        tool_output = ev.result  # ??
+        sources = tool_output.get("sources")
+        tool_output = self.get_last_tool_ouput(sources)
+        logger.info(tool_output)
+
+        response = "Base in your request we found:\n\n" + tool_output
+
+        if self._verbose:
+            logger.info(response)
+        return StopEvent(result={"response": response})
 
     def get_all_messages(self, query: str) -> List[ChatMessage]:
         return self.memory.get(input=query)
+
+    @staticmethod
+    def get_last_tool_ouput(sources: list) -> str:
+        tool_output = [
+            s.content
+            for s in sources[0]
+            if s.tool_name not in ["get_coordinates_from_street"]
+        ]
+        return tool_output[-1]
