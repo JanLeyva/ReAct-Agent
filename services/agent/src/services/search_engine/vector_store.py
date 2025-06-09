@@ -96,7 +96,7 @@ class VectorStore:
     def semantic_search(
         self,
         query: str,
-        limit: int = 5,
+        limit: int = 3,
         metadata_filter: Union[dict, List[dict]] = None,
         formatted: bool = True,
     ) -> Union[List[Tuple[Any, ...]], pd.DataFrame]:

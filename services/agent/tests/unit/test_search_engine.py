@@ -43,7 +43,6 @@ def test_search_engine_query_coordinates_no_results(query, long, lat, distance):
     assert result == "No Results where found for your localization"
 
 
-# TODO uncomment test_search_engine_query_coordinates when we fill the db
 @pytest.mark.parametrize(
     ("query", "lat", "long", "distance"),
     [
