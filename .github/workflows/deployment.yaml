@@ -1,4 +1,4 @@
-name: Push image on ECR and Deploy App on ECS Fargate
+name: Push image on ECR and deploy agent
 on:
   push:
     branches:
