@@ -24,8 +24,6 @@ class Config(BaseSettings):
 
 
 config = Config()
-
-
 # TODO: testing propuse, we can delete it in PROD
 os.environ["OPIK_API_KEY"] = config.api_key_opik
 os.environ["OPIK_WORKSPACE"] = config.opik_workspace
