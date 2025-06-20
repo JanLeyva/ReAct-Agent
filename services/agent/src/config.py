@@ -22,6 +22,7 @@ class Config(BaseSettings):
     embedding_dimensions: int
     time_partition_interval: int
 
+
 config = Config()
 
 # TODO: testing propuse, we can delete it in PROD
