@@ -18,7 +18,18 @@ aws ecr get-login-password --region eu-north-1 | sudo docker login --username AW
 ## Log in to aws ecr to Pull
 
 **Disclaimer:** use sudo docker login instead of docker login to later pull the image (otherwise no permision is used).
-aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin 529237317147.dkr.ecr.eu-north-1.amazonaws.com
+aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin .dkr.ecr.eu-north-1.amazonaws.com
 
 
-docker pull 529237317147.dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
+docker pull .dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
+
+## Enable/Disable Telegram WebHook
+
+### Enable
+```
+curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/setWebhook" -d "url=endpoint"
+```
+
+```
+curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/deleteWebhook"
+```
