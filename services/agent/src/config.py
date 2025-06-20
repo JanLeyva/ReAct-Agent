@@ -21,10 +21,6 @@ class Config(BaseSettings):
     table_name: str
     embedding_dimensions: int
     time_partition_interval: int
-    supabase_pass: str
-    supabase_url: str
-    supabase_api_key: str
-
 
 config = Config()
 
