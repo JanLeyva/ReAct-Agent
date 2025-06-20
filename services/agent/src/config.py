@@ -21,8 +21,6 @@ class Config(BaseSettings):
     table_name: str
     embedding_dimensions: int
     time_partition_interval: int
-
-
 config = Config()
 # TODO: testing propuse, we can delete it in PROD
 os.environ["OPIK_API_KEY"] = config.api_key_opik
