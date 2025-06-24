@@ -39,5 +39,4 @@ def handler(event, context):
             f"https://api.telegram.org/bot{token}/sendMessage",
             json={"chat_id": chat_id, "text": response},
         )
-
-    return {"sttusCode": 200, "body": json.dumps("OK")}
+    return {"statusCode": 200, "body": json.dumps("OK")}

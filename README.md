@@ -33,3 +33,7 @@ curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/setWebhook" -d "url=e
 ```
 curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/deleteWebhook"
 ```
+
+
+## TODO
+modify pyproject in two env one for dev with test and extra dependencies other with just the production lib need.

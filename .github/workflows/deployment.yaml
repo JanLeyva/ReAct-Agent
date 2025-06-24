@@ -2,13 +2,13 @@ name: Push image on ECR and deploy agent
 on:
   push:
     branches:
-      - main
+      - monolithic
     paths:
       - 'services/agent/**'
 
   pull_request:
     branches:
-      - main
+      - monolithic
     paths:
       - 'services/agent/**'
 
@@ -40,6 +40,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd services/agent
-          docker build -f Dockerfile.lambda -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -f Dockerfile.aws -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "Image pushed to ECR: $REGISTRY/$REPOSITORY:$IMAGE_TAG"
