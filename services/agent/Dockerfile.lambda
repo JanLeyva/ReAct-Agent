@@ -31,7 +31,11 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Set runtime interface client as default command for the container runtime
-ENTRYPOINT [ "python", "-m", "awslambdaric" ]
+# (Optional) Add Lambda Runtime Interface Emulator and use a script in the ENTRYPOINT for simpler local runs
+ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
+COPY entry_point.sh /
+RUN chmod 755 /usr/bin/aws-lambda-rie /entry_point.sh
+ENTRYPOINT [ "/entry_point.sh" ]
 # Pass the name of the function handler as an argument to the runtime
 CMD [ "lambda.handler" ]
 
