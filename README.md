@@ -27,13 +27,35 @@ docker pull .dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
 
 ### Enable
 ```
-curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/setWebhook" -d "url=endpoint"
+curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" -d "url=endpoint"
 ```
 
 ```
-curl -X POST "https://api.telegram.org/bot8089666445:TOKEN/deleteWebhook"
+curl -X POST "https://api.telegram.org/bot<TOKEN>/deleteWebhook"
 ```
 
+
+## Webhook example
+```
+{
+  "resource": "/",
+  "path": "/",
+  "httpMethod": "POST",
+  "body": "{\"update_id\": 800524573, \"message\": {\"message_id\": 800524573, \"from\": {\"id\": 800524573, \"is_bot\": false, \"first_name\": \"Test\"}, \"chat\": {\"id\": 800524573, \"type\": \"private\"}, \"date\": 1678886400, \"text\": \"hii\"}}",
+  "isBase64Encoded": false
+}
+```
+```
+curl -X POST \             
+     -H "Content-Type: application/json" \
+     -d "$RESPONSE" \
+     "$URL_TELEGRAM"
+```
+
+Test lambda image locally
+```
+curl -X POST http://localhost:9000/2015-03-31/functions/function/invocations -d ''
+```
 
 ## TODO
 modify pyproject in two env one for dev with test and extra dependencies other with just the production lib need.

@@ -29,3 +29,4 @@ os.environ["OPIK_API_KEY"] = config.api_key_opik
 os.environ["OPIK_WORKSPACE"] = config.opik_workspace
 os.environ["OPIK_PROJECT_NAME"] = config.opik_project_name
 os.environ["OPENAI_API_KEY"] = config.openai_api_key
+os.environ["TELEGRAM_TOKEN"] = config.api_key_bot_telegram

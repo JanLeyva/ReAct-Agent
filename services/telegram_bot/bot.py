@@ -49,11 +49,12 @@ def send_request_msg(message: Message) -> str:
     """
     # request to Agent API
     # Define the URL endpoint
-    url = "http://127.0.0.1:8000/telegram/"
+    url = "http://127.0.0.1:8000/generate/"
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
+    print(message)
     # Prepare the JSON payload
-    payload = {"message": message.text}
+    payload = {"message": message.text, "chat_id": message.chat.id}
     # Send the POST request
     return requests.post(url, json=payload, headers=headers)
 
@@ -71,6 +72,7 @@ async def echo_handler(message: Message) -> None:
     """
     try:
         response = send_request_msg(message)
+        print(response)
         # Send a copy of the received message
         await message.answer(response.json()["response"])
     except TypeError:

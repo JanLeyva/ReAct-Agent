@@ -25,7 +25,7 @@ async def generate(message: str) -> str:
 
 def handler(event, context):
     """Use Telegram Bot Webhook to recive and send messages"""
-
+    logger.info(f"event {event}")
     body = json.loads(event.get("body", "{}"))
     message = body.get("message", {})
     chat_id = message.get("chat", {}).get("id")
