@@ -57,6 +57,12 @@ Add the ec2-user to the docker group so that you can run Docker commands without
 sudo usermod -a -G docker ec2-user
 ```
 
+### 3. Send files SSH
+
+```
+scp -i ~/.ssh/xxxx.pem .env ec2-user@xxx.xx.xx:.env
+```
+
 ## Webhook example
 ```
 {

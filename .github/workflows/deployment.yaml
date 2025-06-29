@@ -2,13 +2,13 @@ name: Push image on ECR and deploy agent
 on:
   push:
     branches:
-      - monolithic
+      - main
     paths:
       - 'services/agent/**'
 
   pull_request:
     branches:
-      - monolithic
+      - main
     paths:
       - 'services/agent/**'
 
@@ -37,9 +37,10 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: lambda/agent-restaurant
-          IMAGE_TAG: ${{ github.sha }}
+          # IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           cd services/agent
-          docker build -f Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -f Dockerfile -t $REGISTRY/$REPOSITORY:latest .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "Image pushed to ECR: $REGISTRY/$REPOSITORY:$IMAGE_TAG"
+          echo "Image pushed to ECR: $REGISTRY/$REPOSITORY:latest"
