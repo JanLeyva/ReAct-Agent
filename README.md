@@ -35,6 +35,28 @@ curl -X POST "https://api.telegram.org/bot<TOKEN>/deleteWebhook"
 ```
 
 
+## 1. Connect to EC2
+
+```
+ssh -i ~/.ssh (your .pem key) ec2-user@Public IPv4 address
+```
+
+### 2. install docker
+
+```
+sudo yum update
+sudo yum install docker
+```
+
+Start the Docker service:
+```
+sudo systemctl start docker
+```
+Add the ec2-user to the docker group so that you can run Docker commands without using sudo:
+```
+sudo usermod -a -G docker ec2-user
+```
+
 ## Webhook example
 ```
 {
