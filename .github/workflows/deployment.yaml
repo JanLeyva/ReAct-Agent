@@ -2,13 +2,13 @@ name: Push image on ECR and deploy agent
 on:
   push:
     branches:
-      - main
+      - monolithic
     paths:
       - 'services/agent/**'
 
   pull_request:
     branches:
-      - main
+      - monolithic
     paths:
       - 'services/agent/**'
 

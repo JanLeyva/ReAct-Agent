@@ -1,16 +1,20 @@
-# internal lib
+# 1st party
+import json
+import requests
+
+# internal libs
 from src.services.load_restaurants.upload_place import GetUploadPlace
 from src.services.agent.react_agent import ReActAgent
 from src.services.search_engine.vector_store import VectorStore
 from src.shared.llm.factory import llm
 from src.services.agent.tools import tools
+from src.config import config
 
 # 3rd party
 import asyncio
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
-from time import time
 from loguru import logger
 
 agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
@@ -18,9 +22,8 @@ app = FastAPI()
 vec = VectorStore()
 
 
-class TelegramMsg(BaseModel):
-    message: str
-    chat_id: int
+class TelegramWebHook(BaseModel):
+    body: str
 
 
 class SearchEngineQuery(BaseModel):
@@ -38,24 +41,28 @@ def health():
     return {"message": "OK"}
 
 
-async def main(message: str) -> str:
+async def generate(message: str) -> str:
     # Run the agent
     response = await agent.run(input=message)
     logger.info(response)
     return response["response"]
 
 
-@app.post("/generate/")
-def get_agent_response(request: TelegramMsg):
-    logger.info(f"message: {request.message}")
-    message = asyncio.run(main(request.message))
+@app.post("/telegram/")
+def get_agent_response(request: TelegramWebHook):
+    body = json.loads(request.get("body", "{}"))
+    logger.info(f"message: {request.body}")
+    message = body.get("message", {})
+    chat_id = message.get("chat", {}).get("id")
+    text = message.get("text")
     logger.info(f"response: {message} | chat_id: {request.chat_id}")
-
-    return {
-        "response": message,
-        "chat_id": request.chat_id,
-        "timestamp": time(),
-    }
+    if text:
+        response = asyncio.run(generate(text))
+        requests.post(
+            f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
+            json={"chat_id": chat_id, "text": response},
+        )
+    return {"statusCode": 200, "body": json.dumps("OK")}
 
 
 @app.post("/search/query/")
