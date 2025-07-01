@@ -66,11 +66,27 @@ scp -i ~/.ssh/xxxx.pem .env ec2-user@xxx.xx.xx:.env
 ## Webhook example
 ```
 {
-  "resource": "/",
-  "path": "/",
-  "httpMethod": "POST",
-  "body": "{\"update_id\": 800524573, \"message\": {\"message_id\": 800524573, \"from\": {\"id\": 800524573, \"is_bot\": false, \"first_name\": \"Test\"}, \"chat\": {\"id\": 800524573, \"type\": \"private\"}, \"date\": 1678886400, \"text\": \"hii\"}}",
-  "isBase64Encoded": false
+  "update_id": 123456789,
+  "message": {
+    "message_id": 1,
+    "from": {
+      "id": 12345678,
+      "is_bot": false,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe"
+    },
+    "chat": {
+      "id": 12345678,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe",
+      "type": "private"
+    },
+    "date": 1678886400,
+    "text": "Hello, bot! How are you?"
+  },
+  "secret_token": "XXX"
 }
 ```
 ```

@@ -21,6 +21,7 @@ class Config(BaseSettings):
     table_name: str
     embedding_dimensions: int
     time_partition_interval: int
+    secret_token: str
 
 
 config = Config()

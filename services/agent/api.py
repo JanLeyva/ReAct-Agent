@@ -1,5 +1,6 @@
 # 1st party
 import json
+from typing import Optional
 import requests
 
 # internal libs
@@ -22,8 +23,49 @@ app = FastAPI()
 vec = VectorStore()
 
 
-class TelegramWebHook(BaseModel):
-    body: str
+# Define Pydantic models to match Telegram's Update structure
+class User(BaseModel):
+    id: int
+    is_bot: bool
+    first_name: str
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+
+
+class Chat(BaseModel):
+    id: int
+    type: str
+    title: Optional[str] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+
+class Message(BaseModel):
+    message_id: int
+    from_user: Optional[User] = None
+    chat: Chat
+    date: int
+    text: Optional[str] = None
+
+
+class CallbackQuery(BaseModel):
+    id: str
+    from_user: User
+    message: Optional[Message] = None
+    inline_message_id: Optional[str] = None
+    chat_instance: str
+    data: Optional[str] = None
+
+
+class UpdateTelegram(BaseModel):
+    update_id: int
+    message: Optional[Message] = None
+    edited_message: Optional[Message] = None
+    callback_query: Optional[CallbackQuery] = None
+    poll: Optional[dict] = None
+    poll_answer: Optional[dict] = None
+    secret_token: Optional[str] = None
 
 
 class SearchEngineQuery(BaseModel):
@@ -49,20 +91,20 @@ async def generate(message: str) -> str:
 
 
 @app.post("/telegram/")
-def get_agent_response(request: TelegramWebHook):
-    body = json.loads(request.get("body", "{}"))
-    logger.info(f"message: {request.body}")
-    message = body.get("message", {})
-    chat_id = message.get("chat", {}).get("id")
-    text = message.get("text")
-    logger.info(f"response: {message} | chat_id: {request.chat_id}")
-    if text:
-        response = asyncio.run(generate(text))
-        requests.post(
-            f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
-            json={"chat_id": chat_id, "text": response},
-        )
-    return {"statusCode": 200, "body": json.dumps("OK")}
+def get_agent_response(update: UpdateTelegram):
+    if update.secret_token == config.secret_token:
+        message = update.message
+        chat_id = message.chat.id
+        text = message.text
+        logger.info(f"response: {message} | chat_id: {chat_id}")
+        if text:
+            response = asyncio.run(generate(text))
+            requests.post(
+                f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
+                json={"chat_id": chat_id, "text": response},
+            )
+        return {"statusCode": 200, "body": json.dumps("OK")}
+    return {"statusCode": 401, "body": json.dumps("Access denied")}
 
 
 @app.post("/search/query/")
