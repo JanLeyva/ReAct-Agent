@@ -62,17 +62,12 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            # Set environment variables for the deployment script
-            ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}" # This won't work directly as login-ecr is in another job. We need to pass it.
-            # WORKAROUND: Re-login to ECR on EC2 or ensure EC2 instance role has ECR pull permissions.
-            # For simplicity, assuming EC2 instance has IAM role with ECR pull permissions.
-            # If not, you'd need to pass ECR_REGISTRY and REPOSITORY from the previous job or re-login.
-
             # Get ECR login password and login to ECR on the EC2 instance
             # IMPORTANT: Ensure your EC2 instance's IAM role has permissions to pull from ECR.
             # Permissions: ecr:GetDownloadUrlForLayer, ecr:BatchGetImage, ecr:BatchCheckLayerAvailability, ecr:GetAuthorizationToken
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
+            echo "ECR login DONE"
+            
             # Define variables for the Docker image and container
             ECR_REPOSITORY="lambda/agent-restaurant"
             IMAGE_TAG="latest"
