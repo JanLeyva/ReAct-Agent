@@ -29,7 +29,8 @@ mypy:
 	mypy 
 
 test:
-	py.test -vv $(IGNORE_PATH)
+	cd $(PROJECT_DIRS); echo "Running pytest"; \
+	uv run py.test -vv $(IGNORE_PATH) -W ignore
 
 coverage:
 	@echo "============================== Tests =============================="

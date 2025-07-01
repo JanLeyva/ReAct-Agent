@@ -1,0 +1,99 @@
+name: Push image on ECR and deploy agent
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/agent/**'
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'services/agent/**'
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  build_and_push: # Renamed job for clarity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: lambda/agent-restaurant
+          IMAGE_TAG: latest
+        run: |
+          cd services/agent
+          docker build -f Dockerfile -t $REPOSITORY:$IMAGE_TAG .
+          docker tag $REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "Image pushed to ECR: $REGISTRY/$REPOSITORY:$IMAGE_TAG"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push # This job depends on the build_and_push job
+    steps:
+      - name: Configure AWS credentials for EC2 deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }} # Re-assume role for deployment context
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            # Set environment variables for the deployment script
+            ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}" # This won't work directly as login-ecr is in another job. We need to pass it.
+            # WORKAROUND: Re-login to ECR on EC2 or ensure EC2 instance role has ECR pull permissions.
+            # For simplicity, assuming EC2 instance has IAM role with ECR pull permissions.
+            # If not, you'd need to pass ECR_REGISTRY and REPOSITORY from the previous job or re-login.
+
+            # Get ECR login password and login to ECR on the EC2 instance
+            # IMPORTANT: Ensure your EC2 instance's IAM role has permissions to pull from ECR.
+            # Permissions: ecr:GetDownloadUrlForLayer, ecr:BatchGetImage, ecr:BatchCheckLayerAvailability, ecr:GetAuthorizationToken
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+            # Define variables for the Docker image and container
+            ECR_REPOSITORY="lambda/agent-restaurant"
+            IMAGE_TAG="latest"
+            FULL_IMAGE_NAME="${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+            CONTAINER_NAME="agent-restaurant"
+            HOST_PORT="${{ secrets.HOST_PORT }}"
+            CONTAINER_PORT="${{ secrets.CONTAINER_PORT }}"
+
+            echo "Connect to ECR"
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+            echo "Pulling latest Docker image: $FULL_IMAGE_NAME"
+            sudo docker pull $FULL_IMAGE_NAME
+
+            echo "Stopping existing container (if any): $CONTAINER_NAME"
+            docker stop $CONTAINER_NAME || true
+
+            echo "Removing old container (if any): $CONTAINER_NAME"
+            docker rm $CONTAINER_NAME || true
+
+            echo "Running new Docker container: $CONTAINER_NAME"
+            docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT --env-file .env $FULL_IMAGE_NAME
+
+            echo "Deployment complete!"

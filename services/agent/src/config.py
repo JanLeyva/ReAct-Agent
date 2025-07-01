@@ -9,20 +9,25 @@ class Config(BaseSettings):
     groq_api_key: str
     openai_api_key: Optional[str]
     api_key_bot_telegram: Optional[str]
-    tavily_api_key: Optional[str]
-    api_key_google_maps: Optional[str]
     api_key_opik: Optional[str]
-    api_key_google_genai: Optional[str]
+    api_key_google_genai: str
+    api_key_google_maps: str
     opik_workspace: Optional[str]
     opik_project_name: Optional[str]
     model_provider: Literal["groq", "openai"]
     model_name: Literal["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gpt-4o-min"]
+    database_service_url: str
+    cohere_api_key: str
+    table_name: str
+    embedding_dimensions: int
+    time_partition_interval: int
+    secret_token: str
 
 
 config = Config()
-
 # TODO: testing propuse, we can delete it in PROD
 os.environ["OPIK_API_KEY"] = config.api_key_opik
 os.environ["OPIK_WORKSPACE"] = config.opik_workspace
 os.environ["OPIK_PROJECT_NAME"] = config.opik_project_name
 os.environ["OPENAI_API_KEY"] = config.openai_api_key
+os.environ["TELEGRAM_TOKEN"] = config.api_key_bot_telegram

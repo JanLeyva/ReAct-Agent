@@ -35,14 +35,15 @@ def lambda_handler(event, context):
     message = body.get("message", {})
     chat_id = message.get("chat", {}).get("id")
     text = message.get("text", "")
+    print(f"Received message: {text} from chat_id: {chat_id}")
 
     if text:
         # TODO: uncomment below and set up ECS url to API
-        response = send_request_msg(text, chat_id)
-        response = response.json()
-        # response = {"response": f"test lambda - {text}", "chat_id": 123}
-        reply = response.get("response", "")
-        # reply = f"You said: {text} - {chat_id}"
+        # response = send_request_msg(text, chat_id)
+        # response = response.json()
+        # reply = response.get("response", "")
+        # print(f"Response: {reply}")
+        reply = f"You said: {text} - {chat_id}"
         # reply to user
         token = os.environ["TELEGRAM_TOKEN"]
         requests.post(

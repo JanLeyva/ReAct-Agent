@@ -1,0 +1,44 @@
+# Define global args
+ARG FUNCTION_DIR="/app"
+ARG PYTHON_VERSION="3.12"
+
+# Stage 1 - bundle base image + runtime
+# Grab a fresh copy of the image and install GCC
+FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-bookworm AS python-bookworm
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+# Install postgresql-server-dev-all
+RUN apt update && \
+    apt install -y postgresql && \
+    rm -rf /var/lib/apt/lists/
+
+# Stage 2 - build function and dependencies
+FROM python-bookworm AS build-image
+ARG FUNCTION_DIR
+# Create function directory
+RUN mkdir -p ${FUNCTION_DIR}
+# Copy the application code into the build image
+WORKDIR ${FUNCTION_DIR}
+# Copy handler function
+ADD . /app
+# install project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev
+# Stage 3 - final runtime image
+# Grab a fresh copy of the Python image
+FROM python:${PYTHON_VERSION}-bookworm
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
+# Copy in the built dependencies
+COPY --from=build-image --chown=app:app ${FUNCTION_DIR} ${FUNCTION_DIR}
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+# (Optional) Add Lambda Runtime Interface Emulator and use a script in the ENTRYPOINT for simpler local runs
+ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
+COPY entry_point.sh /
+RUN chmod 755 /usr/bin/aws-lambda-rie /entry_point.sh
+ENTRYPOINT [ "/entry_point.sh" ]
+CMD [ "lambda.handler" ]

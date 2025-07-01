@@ -18,7 +18,88 @@ aws ecr get-login-password --region eu-north-1 | sudo docker login --username AW
 ## Log in to aws ecr to Pull
 
 **Disclaimer:** use sudo docker login instead of docker login to later pull the image (otherwise no permision is used).
-aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin 529237317147.dkr.ecr.eu-north-1.amazonaws.com
+aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin .dkr.ecr.eu-north-1.amazonaws.com
 
 
-docker pull 529237317147.dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
+docker pull .dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
+
+## Enable/Disable Telegram WebHook
+
+### Enable
+```
+curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" -d "url=endpoint"
+```
+
+```
+curl -X POST "https://api.telegram.org/bot<TOKEN>/deleteWebhook"
+```
+
+
+## 1. Connect to EC2
+
+```
+ssh -i ~/.ssh (your .pem key) ec2-user@Public IPv4 address
+```
+
+### 2. install docker
+
+```
+sudo yum update
+sudo yum install docker
+```
+
+Start the Docker service:
+```
+sudo systemctl start docker
+```
+Add the ec2-user to the docker group so that you can run Docker commands without using sudo:
+```
+sudo usermod -a -G docker ec2-user
+```
+
+### 3. Send files SSH
+
+```
+scp -i ~/.ssh/xxxx.pem .env ec2-user@xxx.xx.xx:.env
+```
+
+## Webhook example
+```
+{
+  "update_id": 123456789,
+  "message": {
+    "message_id": 1,
+    "from": {
+      "id": 12345678,
+      "is_bot": false,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe"
+    },
+    "chat": {
+      "id": 12345678,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe",
+      "type": "private"
+    },
+    "date": 1678886400,
+    "text": "Hello, bot! How are you?"
+  },
+  "secret_token": "XXX"
+}
+```
+```
+curl -X POST \             
+     -H "Content-Type: application/json" \
+     -d "$RESPONSE" \
+     "$URL_TELEGRAM"
+```
+
+Test lambda image locally
+```
+curl -X POST http://localhost:9000/2015-03-31/functions/function/invocations -d ''
+```
+
+## TODO
+modify pyproject in two env one for dev with test and extra dependencies other with just the production lib need.
