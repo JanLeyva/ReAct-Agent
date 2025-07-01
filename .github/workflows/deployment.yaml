@@ -61,34 +61,31 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            # Get ECR login password and login to ECR on the EC2 instance
-            # IMPORTANT: Ensure your EC2 instance's IAM role has permissions to pull from ECR.
-            # Permissions: ecr:GetDownloadUrlForLayer, ecr:BatchGetImage, ecr:BatchCheckLayerAvailability, ecr:GetAuthorizationToken
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-            echo "ECR login DONE"
-            
-            # Define variables for the Docker image and container
-            ECR_REPOSITORY="lambda/agent-restaurant"
-            IMAGE_TAG="latest"
-            FULL_IMAGE_NAME="${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
-            CONTAINER_NAME="agent-restaurant"
-            HOST_PORT="${{ secrets.HOST_PORT }}"
-            CONTAINER_PORT="${{ secrets.CONTAINER_PORT }}"
+          script: whoami
+            # aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            # echo "ECR login DONE"
 
-            echo "Connect to ECR"
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            # # Define variables for the Docker image and container
+            # ECR_REPOSITORY="lambda/agent-restaurant"
+            # IMAGE_TAG="latest"
+            # FULL_IMAGE_NAME="${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+            # CONTAINER_NAME="agent-restaurant"
+            # HOST_PORT="${{ secrets.HOST_PORT }}"
+            # CONTAINER_PORT="${{ secrets.CONTAINER_PORT }}"
 
-            echo "Pulling latest Docker image: $FULL_IMAGE_NAME"
-            sudo docker pull $FULL_IMAGE_NAME
+            # echo "Connect to ECR"
+            # aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ROLE_TO_ASSUME_ARN_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-            echo "Stopping existing container (if any): $CONTAINER_NAME"
-            docker stop $CONTAINER_NAME || true
+            # echo "Pulling latest Docker image: $FULL_IMAGE_NAME"
+            # sudo docker pull $FULL_IMAGE_NAME
 
-            echo "Removing old container (if any): $CONTAINER_NAME"
-            docker rm $CONTAINER_NAME || true
+            # echo "Stopping existing container (if any): $CONTAINER_NAME"
+            # docker stop $CONTAINER_NAME || true
 
-            echo "Running new Docker container: $CONTAINER_NAME"
-            docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT --env-file .env $FULL_IMAGE_NAME
+            # echo "Removing old container (if any): $CONTAINER_NAME"
+            # docker rm $CONTAINER_NAME || true
 
-            echo "Deployment complete!"
+            # echo "Running new Docker container: $CONTAINER_NAME"
+            # docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT --env-file .env $FULL_IMAGE_NAME
+
+            # echo "Deployment complete!"
