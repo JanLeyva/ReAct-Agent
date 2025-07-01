@@ -86,6 +86,6 @@ jobs:
             docker rm $CONTAINER_NAME || true
 
             echo "Running new Docker container: $CONTAINER_NAME"
-            docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT --env-file .env $FULL_IMAGE_NAME
+            docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT --env-file production/agent/.env $FULL_IMAGE_NAME
 
             echo "Deployment complete!"
