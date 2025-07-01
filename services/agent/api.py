@@ -14,7 +14,8 @@ from src.config import config
 # 3rd party
 import asyncio
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from starlette import status
 from pydantic import BaseModel
 from loguru import logger
 
@@ -23,7 +24,6 @@ app = FastAPI()
 vec = VectorStore()
 
 
-# Define Pydantic models to match Telegram's Update structure
 class User(BaseModel):
     id: int
     is_bot: bool
@@ -104,7 +104,9 @@ def get_agent_response(update: UpdateTelegram):
                 json={"chat_id": chat_id, "text": response},
             )
         return {"statusCode": 200, "body": json.dumps("OK")}
-    return {"statusCode": 401, "body": json.dumps("Access denied")}
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
+    )
 
 
 @app.post("/search/query/")

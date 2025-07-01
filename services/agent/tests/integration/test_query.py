@@ -1,9 +1,11 @@
 # internal libs
 from api import app
+from src.config import config
 
 # 3rd party
 import pytest
 from fastapi.testclient import TestClient
+
 
 client = TestClient(app)
 
@@ -15,14 +17,48 @@ client = TestClient(app)
         ("recomend me an italian restaurant", 456),
     ],
 )
-def test_telegram_query_coordinates(query, chat_id):
+def test_telegram_query(query, chat_id):
     # Prepare the headers
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     # Prepare the JSON payload
-    payload = {"message": query, "chat_id": chat_id}
-    response = client.post("/generate/", json=payload, headers=headers)
+    payload = {
+        "update_id": 800524573,
+        "message": {
+            "message_id": 800524573,
+            "from": {"id": 800524573, "is_bot": False, "first_name": "Test"},
+            "chat": {"id": chat_id, "type": "private"},
+            "date": 1678886400,
+            "text": query,
+        },
+        "secret_token": config.secret_token,
+    }
+    response = client.post("/telegram/", json=payload, headers=headers)
     assert response.status_code == 200
     body = response.json()
-    assert isinstance(body.get("response"), str)
-    assert isinstance(body.get("chat_id"), int)
-    assert isinstance(body.get("timestamp"), float)
+    assert isinstance(body, dict)
+    assert body.get("body") == '"OK"'
+
+
+@pytest.mark.parametrize(
+    ("query", "chat_id"),
+    [
+        ("Search a japanes restaurant", 123),
+    ],
+)
+def test_telegram_query_denied_access(query, chat_id):
+    # Prepare the headers
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    # Prepare the JSON payload
+    payload = {
+        "update_id": 800524573,
+        "message": {
+            "message_id": 800524573,
+            "from": {"id": 800524573, "is_bot": False, "first_name": "Test"},
+            "chat": {"id": chat_id, "type": "private"},
+            "date": 1678886400,
+            "text": query,
+        },
+        "secret_token": "Wrong Token",
+    }
+    response = client.post("/telegram/", json=payload, headers=headers)
+    assert response.status_code == 401
