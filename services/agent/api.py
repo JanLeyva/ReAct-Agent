@@ -99,7 +99,7 @@ def get_agent_response(
             response = asyncio.run(generate(text))
             requests.post(
                 f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
-                json={"chat_id": chat_id, "text": response},
+                json={"chat_id": chat_id, "text": response, "parse_mode": "MarkdownV2"},
             )
         return {"statusCode": 200, "body": json.dumps("OK")}
     raise HTTPException(

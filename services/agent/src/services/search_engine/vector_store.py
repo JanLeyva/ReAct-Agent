@@ -245,21 +245,15 @@ class VectorStore:
             A formatted string representation of the search results.
         """
 
-        def _fill_template(
-            idx, place: pl.Series
-        ) -> str:  # <--- Type hint here is pl.Series
+        def _fill_template(idx, place: pl.Series) -> str:
             """fill the output template of the agent"""
-            template = f"{idx+1}: <b>{place['name']}</b>: {place['contents']}\n"  # <--- Accessing as if it's a dict or Series with string index
+            template = f"{idx+1}: *{place['name']}*: {place['contents']}\n"
             template += (
-                f"<a href='{place['website']}'>website</a> | "
+                f"[website]({place['website']}) | "
                 if place["website"] is not None
                 else ""
             )
-            template += (
-                f"<a href='{place['url']}'>maps</a> | "
-                if place["url"] is not None
-                else ""
-            )
+            template += f"[maps]({place['url']}) | " if place["url"] is not None else ""
             template += (
                 f"{place['international_phone_number']}"
                 if place["international_phone_number"] is not None
@@ -275,7 +269,7 @@ class VectorStore:
             )  # <--- This yields dictionaries
         ]
 
-        return "".join(result_formatted)
+        return "\n\n".join(result_formatted)
 
     def delete(
         self,
