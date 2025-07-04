@@ -118,6 +118,9 @@ Base in your request we found:\n\n
 ```
 
 #### Improvements - TODO:
-- [ ] make a summary of a summary of the restaurant with two sentences. 
+- [X] make a summary of a summary of the restaurant with two sentences. 
 - [X] Include number and link.
 - [X] Restaurant name in bold.
+- [ ] Connect memory to vector db.
+- [ ] Allow search just by localization??.
+- [ ] API Gateway restrictions.
