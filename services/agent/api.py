@@ -90,7 +90,6 @@ def get_agent_response(
     update: UpdateTelegram,
     x_telegram_bot_api_secret_token: Optional[str] = Header(None),
 ):
-    logger.info(f"msg: {update}")
     if x_telegram_bot_api_secret_token == config.secret_token:
         message = update.message
         chat_id = message.chat.id
@@ -103,12 +102,6 @@ def get_agent_response(
                 json={"chat_id": chat_id, "text": response},
             )
         return {"statusCode": 200, "body": json.dumps("OK")}
-    message = update.message
-    chat_id = message.chat.id
-    requests.post(
-        f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
-        json={"chat_id": chat_id, "text": "incorrect secret_token"},
-    )
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
     )
