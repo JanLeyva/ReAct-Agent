@@ -1,5 +1,4 @@
 # 1st party
-import html
 import json
 from typing import Optional
 import requests
@@ -83,7 +82,6 @@ async def generate(message: str) -> str:
     # Run the agent
     response = await agent.run(input=message)
     logger.info(response)
-    response["response"] = html.escape(response["response"])
     return response["response"]
 
 
