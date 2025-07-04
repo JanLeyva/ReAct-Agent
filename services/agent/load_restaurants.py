@@ -4,7 +4,6 @@ from src.services.search_engine.vector_store import VectorStore
 
 # 3rd party
 import polars as pl
-from loguru import logger
 
 
 if __name__ == "__main__":

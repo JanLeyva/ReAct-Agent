@@ -205,10 +205,10 @@ class Place(PlaceModel):
         """Summary the web text, clean and extract relevant info"""
         prompt = SUMMARY_DESCRIPTION.format(description=description)
         return llm.complete(prompt).text
-    
+
     def summary_description_to_show(description: str) -> str:
         """
-        Summary the web text, clean and extract relevant info 
+        Summary the web text, clean and extract relevant info
         in a short format to show to the user.
         """
         prompt = SUMMARY_DESCRIPTION_TO_SHOW.format(description=description)
