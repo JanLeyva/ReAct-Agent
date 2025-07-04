@@ -516,6 +516,7 @@ class VectorStore:
                 pl.col("description").alias("contents"),
                 pl.col("web_text").alias("web_text"),
                 pl.col("summary_review").alias("summary_review"),
+                pl.col("description_to_show").alias("description_to_show"),
                 pl.col("international_phone_number").alias(
                     "international_phone_number"
                 ),
