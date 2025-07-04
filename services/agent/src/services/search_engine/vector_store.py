@@ -174,7 +174,7 @@ class VectorStore:
         lat: float,
         long: float,
         side: int = 1000,
-        limit: int = 5,
+        limit: int = 3,
         formatted: bool = True,
     ):
         """
