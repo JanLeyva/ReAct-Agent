@@ -86,7 +86,10 @@ async def generate(message: str) -> str:
 
 
 @app.post("/telegram/")
-def get_agent_response(update: UpdateTelegram, x_telegram_bot_api_secret_token: Optional[str] = Header(None)):
+def get_agent_response(
+    update: UpdateTelegram,
+    x_telegram_bot_api_secret_token: Optional[str] = Header(None),
+):
     logger.info(f"msg: {update}")
     if x_telegram_bot_api_secret_token == config.secret_token:
         message = update.message
