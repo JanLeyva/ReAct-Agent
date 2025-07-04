@@ -14,7 +14,7 @@ from src.config import config
 # 3rd party
 import asyncio
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from starlette import status
 from pydantic import BaseModel
 from loguru import logger
@@ -61,7 +61,6 @@ class CallbackQuery(BaseModel):
 class UpdateTelegram(BaseModel):
     update_id: int
     message: Optional[Message] = None
-    secret_token: Optional[str] = None
 
 
 class SearchEngineQuery(BaseModel):
@@ -87,9 +86,9 @@ async def generate(message: str) -> str:
 
 
 @app.post("/telegram/")
-def get_agent_response(update: UpdateTelegram):
+def get_agent_response(update: UpdateTelegram, x_telegram_bot_api_secret_token: Optional[str] = Header(None)):
     logger.info(f"msg: {update}")
-    if update.secret_token == config.secret_token:
+    if x_telegram_bot_api_secret_token == config.secret_token:
         message = update.message
         chat_id = message.chat.id
         text = message.text
