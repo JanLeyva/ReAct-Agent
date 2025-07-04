@@ -61,10 +61,6 @@ class CallbackQuery(BaseModel):
 class UpdateTelegram(BaseModel):
     update_id: int
     message: Optional[Message] = None
-    edited_message: Optional[Message] = None
-    callback_query: Optional[CallbackQuery] = None
-    poll: Optional[dict] = None
-    poll_answer: Optional[dict] = None
     secret_token: Optional[str] = None
 
 

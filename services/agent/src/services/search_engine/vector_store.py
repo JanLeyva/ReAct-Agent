@@ -244,12 +244,35 @@ class VectorStore:
         Returns:
             A formatted string representation of the search results.
         """
-        template = "{idx}: {name}: {description}\n"
-        result_formatted = [
-            template.format(
-                idx=idx + 1, name=place["name"], description=place["contents"]
+
+        def _fill_template(
+            idx, place: pl.Series
+        ) -> str:  # <--- Type hint here is pl.Series
+            """fill the output template of the agent"""
+            template = f"{idx+1}: <b>{place['name']}</b>: {place['contents']}\n"  # <--- Accessing as if it's a dict or Series with string index
+            template += (
+                f"<a href='{place['website']}'>website</a> | "
+                if place["website"] is not None
+                else ""
             )
-            for idx, place in enumerate(results.iter_rows(named=True))
+            template += (
+                f"<a href='{place['url']}'>maps</a> | "
+                if place["url"] is not None
+                else ""
+            )
+            template += (
+                f"{place['international_phone_number']}"
+                if place["international_phone_number"] is not None
+                else ""
+            )
+
+            return template
+
+        result_formatted = [
+            _fill_template(idx, place)
+            for idx, place in enumerate(
+                results.iter_rows(named=True)
+            )  # <--- This yields dictionaries
         ]
 
         return "".join(result_formatted)
@@ -493,6 +516,7 @@ class VectorStore:
                 pl.col("description").alias("contents"),
                 pl.col("web_text").alias("web_text"),
                 pl.col("summary_review").alias("summary_review"),
+                pl.col("description_to_show").alias("description_to_show"),
                 pl.col("international_phone_number").alias(
                     "international_phone_number"
                 ),

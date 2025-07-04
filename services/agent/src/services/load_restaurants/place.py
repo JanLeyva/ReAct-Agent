@@ -6,6 +6,7 @@ from src.shared.templates.prompts import (
     CLEAN_WEB_TEXT,
     SUMMARY_REVIEW,
     SUMMARY_DESCRIPTION,
+    SUMMARY_DESCRIPTION_TO_SHOW,
 )
 from src.shared.llm.factory import llm
 import polars as pl
@@ -172,6 +173,7 @@ class GooglePlaceID(BaseModel):
 
 class Place(PlaceModel):
     description: str
+    description_to_show: str
     web_text: str | None
     summary_review: str | None
 
@@ -192,13 +194,24 @@ class Place(PlaceModel):
         full_description = cls.get_full_description(google_place_data)
 
         description = cls.summary_description(full_description)
+        description_to_show = cls.summary_description_to_show(description)
+
         google_place_data["description"] = description
+        google_place_data["description_to_show"] = description_to_show
 
         return cls.model_validate(google_place_data)
 
     def summary_description(description: str) -> str:
         """Summary the web text, clean and extract relevant info"""
         prompt = SUMMARY_DESCRIPTION.format(description=description)
+        return llm.complete(prompt).text
+
+    def summary_description_to_show(description: str) -> str:
+        """
+        Summary the web text, clean and extract relevant info
+        in a short format to show to the user.
+        """
+        prompt = SUMMARY_DESCRIPTION_TO_SHOW.format(description=description)
         return llm.complete(prompt).text
 
     def summary_web_text(url: str) -> str:

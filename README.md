@@ -103,3 +103,21 @@ curl -X POST http://localhost:9000/2015-03-31/functions/function/invocations -d 
 
 ## TODO
 modify pyproject in two env one for dev with test and extra dependencies other with just the production lib need.
+
+## Enriche Agent Output
+
+Output Example:
+```
+Base in your request we found:\n\n
+
+1: Equilibribcn: This Italian restaurant is a cozy haven serving up delicious cuisine with a focus on pizza. The inviting atmosphere makes for easy conversation, while the high-quality food and excellent service have reviewers raving. Standout dishes include the signature pizzas with delicious crusts. With reasonable prices offering great value, this establishment is a great spot for a pleasant dining experience. The warm and welcoming ambiance makes it an ideal location for return visits, as evident from the loyal customer base. Whether you're looking for a casual night out or a satisfying meal, this Italian restaurant is a great choice, offering a unique blend of quality, value, and cozy charm.\n
+
+2: Can Sardi Eixample Abi Group: This Italian-inspired restaurant offers a warm and inviting atmosphere, perfect for a casual dining experience. The menu features traditional Italian flavors with a twist, including signature dishes like focaccia and Mortazza. With a focus on personal service, the restaurant provides a welcoming ambiance that keeps customers coming back. The availability of good coffee and wine suggests a mid-range price point. Overall, it's an excellent spot to enjoy a delicious meal and a drink, with a unique approach to traditional Italian cuisine that sets it apart. Whether you're looking for a relaxing bite or a drink, this restaurant is a great choice, offering a cozy and inviting vibe that's sure to leave you wanting more.\n
+
+3: Ristorante Pizzeria Il Piccolo Focone: This cozy trattoria-style pizzeria serves high-quality, thin-crust pizzas with fresh ingredients, including gluten-free options. The atmosphere is inviting and pleasant, with reasonable prices and attentive, friendly service. Standout features include homemade tomato sauce and exceptional pizza dough. The menu also offers popular set lunch options and delicious desserts like tiramisu. While some inconsistencies have been noted, the overall consensus is positive, making this pizzeria a great option for those seeking a satisfying Italian dining experience. With its excellent pizzas and welcoming vibe, it's an ideal choice for a casual, yet satisfyin
+```
+
+#### Improvements - TODO:
+- [ ] make a summary of a summary of the restaurant with two sentences. 
+- [X] Include number and link.
+- [X] Restaurant name in bold.
