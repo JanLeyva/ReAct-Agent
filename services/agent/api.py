@@ -1,4 +1,5 @@
 # 1st party
+import html
 import json
 from typing import Optional
 import requests
@@ -82,6 +83,7 @@ async def generate(message: str) -> str:
     # Run the agent
     response = await agent.run(input=message)
     logger.info(response)
+    response["response"] = html.escape(response["response"])
     return response["response"]
 
 
@@ -99,7 +101,7 @@ def get_agent_response(
             response = asyncio.run(generate(text))
             requests.post(
                 f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
-                json={"chat_id": chat_id, "text": response, "parse_mode": "MarkdownV2"},
+                json={"chat_id": chat_id, "text": response, "parse_mode": "HTML"},
             )
         return {"statusCode": 200, "body": json.dumps("OK")}
     raise HTTPException(

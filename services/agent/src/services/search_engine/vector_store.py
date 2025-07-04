@@ -247,13 +247,17 @@ class VectorStore:
 
         def _fill_template(idx, place: pl.Series) -> str:
             """fill the output template of the agent"""
-            template = f"{idx+1}: *{place['name']}*: {place['contents']}\n"
+            template = f"<b>{idx+1}: {place['name']}:</b> {place['contents']}\n"
             template += (
-                f"[website]({place['website']}) | "
+                f"<a href='{place['website']}'>website</a> | "
                 if place["website"] is not None
                 else ""
             )
-            template += f"[maps]({place['url']}) | " if place["url"] is not None else ""
+            template += (
+                f"<a href='{place['url']}'>maps</a> | "
+                if place["url"] is not None
+                else ""
+            )
             template += (
                 f"{place['international_phone_number']}"
                 if place["international_phone_number"] is not None
