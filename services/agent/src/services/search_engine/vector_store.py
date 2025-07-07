@@ -174,7 +174,7 @@ class VectorStore:
         lat: float,
         long: float,
         side: int = 1000,
-        limit: int = 5,
+        limit: int = 3,
         formatted: bool = True,
     ):
         """
@@ -259,7 +259,7 @@ class VectorStore:
                 else ""
             )
             template += (
-                f"{place['international_phone_number']}"
+                f"<a href='{place['international_phone_number']}>{place['international_phone_number']}</a>"
                 if place["international_phone_number"] is not None
                 else ""
             )

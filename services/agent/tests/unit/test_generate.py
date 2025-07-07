@@ -18,7 +18,11 @@ client = TestClient(app)
 )
 def test_telegram_post(query, chat_id):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": config.secret_token,
+    }
     # Prepare the JSON payload
     payload = {
         "update_id": 800524573,
@@ -29,7 +33,6 @@ def test_telegram_post(query, chat_id):
             "date": 1678886400,
             "text": query,
         },
-        "secret_token": config.secret_token,
     }
     response = client.post("/telegram/", json=payload, headers=headers)
     assert response.status_code == 200
@@ -47,7 +50,11 @@ def test_telegram_post(query, chat_id):
 )
 def test_telegram_post_denied_access(query, chat_id):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": "wrong token",
+    }
     # Prepare the JSON payload
     payload = {
         "update_id": 800524573,
@@ -58,7 +65,6 @@ def test_telegram_post_denied_access(query, chat_id):
             "date": 1678886400,
             "text": query,
         },
-        "secret_token": "Wrong token",
     }
     response = client.post("/telegram/", json=payload, headers=headers)
     assert response.status_code == 401

@@ -108,28 +108,48 @@ def get_agent_response(
 
 
 @app.post("/search/query/")
-def get_restaurants_from_query(query: SearchEngineQuery):
+def get_restaurants_from_query(
+    query: SearchEngineQuery,
+    x_telegram_bot_api_secret_token: Optional[str] = Header(None),
+):
     """Search restaurant from query"""
-    results = vec.semantic_search(query.query)
-    return {"message": "OK", "response": results}
+    if x_telegram_bot_api_secret_token == config.secret_token:
+        results = vec.semantic_search(query.query)
+        return {"message": "OK", "response": results}
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
+    )
 
 
 @app.post("/search/query_coordinates/")
-def get_restaurants_from_query_coordinates(query: SearchEngineQueryCoord):
+def get_restaurants_from_query_coordinates(
+    query: SearchEngineQueryCoord,
+    x_telegram_bot_api_secret_token: Optional[str] = Header(None),
+):
     """Search restaurant from query and coordinates"""
-    results = vec.semantic_search_with_filter(
-        query.query, query.long, query.lat, query.distance
+    if x_telegram_bot_api_secret_token == config.secret_token:
+        results = vec.semantic_search_with_filter(
+            query.query, query.long, query.lat, query.distance
+        )
+        return {"message": "OK", "response": results}
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
     )
-    return {"message": "OK", "response": results}
 
 
 @app.post("/upload/restaurant/{place_name}")
-def upload_restaurant(place_name: str):
+def upload_restaurant(
+    place_name: str, x_telegram_bot_api_secret_token: Optional[str] = Header(None)
+):
     """
     Upload restaurant to vector store
     """
-    GetUploadPlace().get_upload_places_by_name(place_name)
-    return {"message": f"Place '{place_name}' uploaded successfully."}
+    if x_telegram_bot_api_secret_token == config.secret_token:
+        GetUploadPlace().get_upload_places_by_name(place_name)
+        return {"message": f"Place '{place_name}' uploaded successfully."}
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
+    )
 
 
 if __name__ == "__main__":

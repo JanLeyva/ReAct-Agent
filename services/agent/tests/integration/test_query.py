@@ -19,7 +19,11 @@ client = TestClient(app)
 )
 def test_telegram_query(query, chat_id):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": config.secret_token,
+    }
     # Prepare the JSON payload
     payload = {
         "update_id": 800524573,

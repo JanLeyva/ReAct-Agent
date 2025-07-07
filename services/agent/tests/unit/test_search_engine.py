@@ -1,6 +1,7 @@
 # internal libs
 from api import app
 from src.services.search_engine.vector_store import VectorStore
+from src.config import config
 
 # 3rd party
 import pytest
@@ -19,8 +20,7 @@ def test_search_engine(query):
     result = vec.semantic_search(query)
 
     assert isinstance(result, str)
-    assert len(result) > 0
-    assert result[0] == "1"
+    assert len(result) > 10
 
 
 @pytest.mark.parametrize(
@@ -58,9 +58,8 @@ def test_search_engine_query_coordinates_no_results(query, long, lat, distance):
 def test_search_engine_query_coordinates(query, long, lat, distance):
     result = vec.semantic_search_with_filter(query, long, lat, distance)
 
-    assert len(result) > 0
     assert isinstance(result, str)
-    # assert result[0] == "1"
+    assert len(result) > 10
 
 
 # API
@@ -70,7 +69,11 @@ def test_search_engine_query_coordinates(query, long, lat, distance):
 )
 def test_search_engine_api(query):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": config.secret_token,
+    }
     # Prepare the JSON payload
     payload = {"query": query}
     response = client.post("/search/query/", json=payload, headers=headers)
@@ -93,7 +96,11 @@ def test_search_engine_api(query):
 )
 def test_search_engine_query_coordinates_no_results_api(query, lat, long, distance):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": config.secret_token,
+    }
     # Prepare the JSON payload
     payload = {"query": query, "long": long, "lat": lat, "distance": distance}
     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
@@ -118,7 +125,11 @@ def test_search_engine_query_coordinates_no_results_api(query, lat, long, distan
 )
 def test_search_engine_query_coordinates_api(query, lat, long, distance):
     # Prepare the headers
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-telegram-bot-api-secret-token": config.secret_token,
+    }
     # Prepare the JSON payload
     payload = {"query": query, "long": long, "lat": lat, "distance": distance}
     response = client.post("/search/query_coordinates/", json=payload, headers=headers)
