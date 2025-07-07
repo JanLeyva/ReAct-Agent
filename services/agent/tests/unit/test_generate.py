@@ -32,7 +32,7 @@ def test_telegram_post(query, chat_id):
             "chat": {"id": chat_id, "type": "private"},
             "date": 1678886400,
             "text": query,
-        }
+        },
     }
     response = client.post("/telegram/", json=payload, headers=headers)
     assert response.status_code == 200
