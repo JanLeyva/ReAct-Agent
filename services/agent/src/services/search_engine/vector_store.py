@@ -259,7 +259,7 @@ class VectorStore:
                 else ""
             )
             template += (
-                f"<a href='{place['international_phone_number']}>{place['international_phone_number']}</a>"
+                f"<a href='{place['international_phone_number']}>'{place['international_phone_number']}'</a>"
                 if place["international_phone_number"] is not None
                 else ""
             )
