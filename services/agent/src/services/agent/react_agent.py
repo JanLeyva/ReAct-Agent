@@ -30,6 +30,7 @@ from llama_index.core.memory import (
     SimpleComposableMemory,
     ChatMemoryBuffer,
 )
+from llama_index.vector_stores.postgres import PGVectorStore
 from llama_index.core.base.llms.types import MessageRole
 
 # uncomment line below and line 55 to use Open Source embedding model
@@ -52,10 +53,17 @@ embed_model = GoogleGenAIEmbedding(
 )
 
 # Memory Long-Short Term
-# TODO init qdrant database or similar
+vector_store = PGVectorStore.from_params(
+    database=config.database_service_url.split("/")[-1],
+    host=config.database_service_url.split("@")[-1].split(":")[0],
+    password=config.database_service_url.split(":")[-2].split("@")[0],
+    port=config.database_service_url.split(":")[-1].split("/")[0],
+    user=config.database_service_url.split("//")[-1].split(":")[0],
+    table_name=config.table_name,
+    embed_dim=config.embedding_dimensions,
+)
 vector_memory = VectorMemory.from_defaults(
-    vector_store=None,  # leave as None to use default in-memory vector store
-    # embed_model=FastEmbedEmbedding(model_name="BAAI/bge-small-en-v1.5"),
+    vector_store=vector_store,
     embed_model=embed_model,
     retriever_kwargs={"similarity_top_k": 1},
 )
