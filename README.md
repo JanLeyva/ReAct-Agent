@@ -2,125 +2,100 @@
 
 <img src="docs/img/whatsapp-agent.svg" alt="whatsapp-agent">
 
+This project is a sophisticated Telegram agent powered by a ReAct-based AI model. It leverages a vector database for efficient semantic search and is designed to be deployed on AWS with an EC2 instance and a Load Balancer. The agent can understand and respond to user queries, providing information about restaurants in Barcelona.
 
-### Llamaindex: building agents and multi-agent systems with AgentWorkflow in LlamaIndex
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Set up Project](#set-up-project)
+- [Services](#services)
+    - [Agent](#agent)
+    - [Load Restaurants](#load-restaurants)
+    - [Search Engine](#search-engine)
+    - [Telegram Bot](#telegram-bot)
+- [How it Works](#how-it-works)
+- [Deployment - Infrastructure (AWS)](#deployment---infrastructure-aws)
 
-## To check ECS  Fargate scale to 0
-[link](https://medium.com/qest/ecs-scale-to-zero-using-cloudfront-8b7dcb61b59b)
+## Project Overview
 
+The WhatsApp Agent is a conversational AI designed to provide information about restaurants. It uses a combination of a powerful language model, a vector database, and a set of tools to understand and respond to user queries. The agent is exposed via a FastAPI application and can be integrated with various messaging platforms, with a reference implementation for Telegram.
 
-## Log in to aws ecr to Pull
+## Set up Project
 
-**Disclaimer:** use sudo docker login instead of docker login to later pull the image (otherwise no permision is used).
-aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin account_id.dkr.ecr.eu-north-1.amazonaws.com
+To set up the project, you will need to have Docker and Docker Compose installed. The project is containerized and can be run using the provided Docker Compose files.
 
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/whatsapp-agent.git
+    cd whatsapp-agent
+    ```
 
-## Log in to aws ecr to Pull
+2.  **Set up the environment variables:**
+    Create a `.env` file in the `services/agent` directory by copying the `.env.example` file. Fill in the required API keys and other configuration variables.
 
-**Disclaimer:** use sudo docker login instead of docker login to later pull the image (otherwise no permision is used).
-aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin .dkr.ecr.eu-north-1.amazonaws.com
+3.  **Run the project:**
+    ```bash
+    docker-compose -f docker-compose/docker-compose-pgvector.yaml up -d
+    ```
+    This will start the PostgreSQL vector database.
 
+4.  **Run the agent:**
+    ```bash
+    cd services/agent
+    docker build -t whatsapp-agent .
+    docker run -p 80:80 --env-file .env whatsapp-agent
+    ```
 
-docker pull .dkr.ecr.eu-north-1.amazonaws.com/telegram_agent:latest
+## Services
 
-## Enable/Disable Telegram WebHook
+### Agent
 
-### Enable
-```
-curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" -d "url=endpoint"
-```
+The core of the project is the `ReActAgent`, which is a custom implementation of the ReAct (Reasoning and Acting) framework. The agent is responsible for processing user input, deciding which tools to use, and generating a response.
 
-```
-curl -X POST "https://api.telegram.org/bot<TOKEN>/deleteWebhook"
-```
+-   **`api.py`**: This file contains the FastAPI application that exposes the agent's functionality through a set of API endpoints. It handles requests from the Telegram bot and other clients.
+-   **`react_agent.py`**: This file contains the implementation of the `ReActAgent`. It uses a language model to reason about the user's input and decide which tools to use. The agent's memory is connected to a PostgreSQL vector database, allowing it to store and retrieve information from past conversations.
+-   **`tools.py`**: This file defines the tools that the agent can use to perform various tasks, such as searching for restaurants, getting directions, and looking up information on the web.
 
+### Load Restaurants
 
-## 1. Connect to EC2
+The `load_restaurants` service is responsible for populating the vector database with information about restaurants. It uses the Google Maps API to fetch data about places and then processes it before uploading it to the database.
 
-```
-ssh -i ~/.ssh (your .pem key) ec2-user@Public IPv4 address
-```
+-   **`upload_place.py`**: This file contains the main logic for fetching data from the Google Maps API and uploading it to the vector database.
+-   **`googlemaps_api.py`**: This file contains a wrapper for the Google Maps API, making it easy to fetch data about places.
+-   **`place.py`**: This file defines the `Place` class, which is used to represent a restaurant or other place.
 
-### 2. install docker
+### Search Engine
 
-```
-sudo yum update
-sudo yum install docker
-```
+The `search_engine` service provides the functionality for searching the vector database. It uses a combination of semantic search and keyword search to find the most relevant results.
 
-Start the Docker service:
-```
-sudo systemctl start docker
-```
-Add the ec2-user to the docker group so that you can run Docker commands without using sudo:
-```
-sudo usermod -a -G docker ec2-user
-```
+-   **`vector_store.py`**: This file contains the `VectorStore` class, which provides an interface for interacting with the PostgreSQL vector database. It includes methods for semantic search, keyword search, and hybrid search.
+-   **`distance_coordinates.py`**: This file contains a utility function for calculating the corners of a square around a given set of coordinates, which is used for location-based searches.
 
-### 3. Send files SSH
+### Telegram Bot
 
-```
-scp -i ~/.ssh/xxxx.pem .env ec2-user@xxx.xx.xx:.env
-```
+The `telegram_bot` service provides a reference implementation of a Telegram bot that can be used to interact with the agent.
 
-## Webhook example
-```
-{
-  "update_id": 123456789,
-  "message": {
-    "message_id": 1,
-    "from": {
-      "id": 12345678,
-      "is_bot": false,
-      "first_name": "John",
-      "last_name": "Doe",
-      "username": "johndoe"
-    },
-    "chat": {
-      "id": 12345678,
-      "first_name": "John",
-      "last_name": "Doe",
-      "username": "johndoe",
-      "type": "private"
-    },
-    "date": 1678886400,
-    "text": "Hello, bot! How are you?"
-  },
-  "secret_token": "XXX"
-}
-```
-```
-curl -X POST \             
-     -H "Content-Type: application/json" \
-     -d "$RESPONSE" \
-     "$URL_TELEGRAM"
-```
+-   **`bot.py`**: This file contains the main logic for the Telegram bot. It uses the `aiogram` library to handle incoming messages and send responses back to the user.
+-   **`config.py`**: This file contains the configuration for the Telegram bot, including the API key.
 
-Test lambda image locally
-```
-curl -X POST http://localhost:9000/2015-03-31/functions/function/invocations -d ''
-```
+## How it Works
 
-## TODO
-modify pyproject in two env one for dev with test and extra dependencies other with just the production lib need.
+1.  A user sends a message to the Telegram bot.
+2.  The Telegram bot forwards the message to the agent's API.
+3.  The agent's API receives the message and passes it to the `ReActAgent`.
+4.  The `ReActAgent` processes the message and decides which tools to use.
+5.  If the agent needs to search for a restaurant, it uses the `search_engine` service to query the vector database.
+6.  The `search_engine` service returns the most relevant results to the agent.
+7.  The agent uses the results to generate a response, which is then sent back to the user through the Telegram bot.
 
-## Enriche Agent Output
+## Deployment - Infrastructure (AWS)
 
-Output Example:
-```
-Base in your request we found:\n\n
+The project is designed to be deployed on AWS using an EC2 instance and a Load Balancer. The `deployment.yaml` file in the `.github/workflows` directory contains a GitHub Actions workflow that automates the deployment process.
 
-1: Equilibribcn: This Italian restaurant is a cozy haven serving up delicious cuisine with a focus on pizza. The inviting atmosphere makes for easy conversation, while the high-quality food and excellent service have reviewers raving. Standout dishes include the signature pizzas with delicious crusts. With reasonable prices offering great value, this establishment is a great spot for a pleasant dining experience. The warm and welcoming ambiance makes it an ideal location for return visits, as evident from the loyal customer base. Whether you're looking for a casual night out or a satisfying meal, this Italian restaurant is a great choice, offering a unique blend of quality, value, and cozy charm.\n
+The workflow performs the following steps:
 
-2: Can Sardi Eixample Abi Group: This Italian-inspired restaurant offers a warm and inviting atmosphere, perfect for a casual dining experience. The menu features traditional Italian flavors with a twist, including signature dishes like focaccia and Mortazza. With a focus on personal service, the restaurant provides a welcoming ambiance that keeps customers coming back. The availability of good coffee and wine suggests a mid-range price point. Overall, it's an excellent spot to enjoy a delicious meal and a drink, with a unique approach to traditional Italian cuisine that sets it apart. Whether you're looking for a relaxing bite or a drink, this restaurant is a great choice, offering a cozy and inviting vibe that's sure to leave you wanting more.\n
-
-3: Ristorante Pizzeria Il Piccolo Focone: This cozy trattoria-style pizzeria serves high-quality, thin-crust pizzas with fresh ingredients, including gluten-free options. The atmosphere is inviting and pleasant, with reasonable prices and attentive, friendly service. Standout features include homemade tomato sauce and exceptional pizza dough. The menu also offers popular set lunch options and delicious desserts like tiramisu. While some inconsistencies have been noted, the overall consensus is positive, making this pizzeria a great option for those seeking a satisfying Italian dining experience. With its excellent pizzas and welcoming vibe, it's an ideal choice for a casual, yet satisfyin
-```
-
-#### Improvements - TODO:
-- [X] make a summary of a summary of the restaurant with two sentences. 
-- [X] Include number and link.
-- [X] Restaurant name in bold.
-- [ ] Connect memory to vector db.
-- [ ] Allow search just by localization??.
-- [ ] API Gateway restrictions.
+1.  Builds the Docker image for the agent.
+2.  Pushes the Docker image to Amazon ECR.
+3.  Connects to the EC2 instance via SSH.
+4.  Pulls the latest Docker image from ECR.
+5.  Stops and removes the old container.
+6.  Runs the new container with the updated image.
