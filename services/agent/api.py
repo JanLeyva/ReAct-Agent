@@ -74,12 +74,8 @@ class SearchEngineQueryCoord(SearchEngineQuery):
 
 
 @app.get("/")
-def health(x_telegram_bot_api_secret_token: Optional[str] = Header(None)):
-    if x_telegram_bot_api_secret_token == config.secret_token:
-        return {"message": "OK"}
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
-    )
+def health():
+    return {"message": "OK"}
 
 
 async def generate(message: str) -> str:

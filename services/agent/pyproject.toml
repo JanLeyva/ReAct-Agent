@@ -5,6 +5,7 @@ description = "Agent that recommend restaurants in Barcelona."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "cohere>=5.15.0",
     "fastapi>=0.115.12",
     "googlemaps>=4.10.0",
     "httpx>=0.28.1",
@@ -18,18 +19,13 @@ dependencies = [
     "opik>=1.7.11",
     "polars>=1.30.0",
     "psycopg2==2.9.10",
+    "psycopg>=3.2.9",
     "pydantic-settings>=2.8.1",
     "uvicorn>=0.34.2",
     "time-uuid>=0.2.0",
     "vecs>=0.4.5",
-]
-
-[project.optional-dependencies]
-extras = [
+    "llama-index-vector-stores-postgres>=0.5.4",
     "crawl4ai>=0.6.3",
-    "cohere>=5.15.0"
-]
-
-tests = [
     "pytest>=8.3.5"
 ]
+
