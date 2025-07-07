@@ -1,8 +1,16 @@
-# Restaurants Agent
+<p align="center">
+        <img alt="logo" src="docs/img/whatsapp-agent.svg" width=1000 />
+    <h1 align="center">📱 Restaurant Agent 📱</h1>
+    <h3 align="center"> Test the Agent<a href="https://t.me/AgenticAgent_bot"> here</a></h3>
+</p>
+
+
 
 <p align="center">
-  <img src="docs/img/whatsapp-agent.svg" alt="whatsapp-agent" width="250">
+  <img src="docs/img/Telegram_logo.svg.png" alt="telegram" width="100">
 </p>
+
+
 
 <p align="center">
   A sophisticated Telegram agent powered by a ReAct-based AI model. It leverages a vector database for efficient semantic search and is designed to be deployed on AWS. The agent can understand and respond to user queries, providing information about restaurants in Barcelona.
@@ -60,9 +68,9 @@ Before you begin, you need to gather several API keys and credentials.
     -   `API_KEY_BOT_TELEGRAM`: Create a new bot and get the token from [@BotFather](https://t.me/botfather) on Telegram. [Instructions here](https://core.telegram.org/bots/tutorial#obtain-your-bot-token).
     -   `API_KEY_GOOGLE_MAPS`: Get a free API key from the [Google Maps Platform](https://developers.google.com/maps/documentation/embed/get-api-key).
     -   `API_KEY_GOOGLE_GENAI`: The agent uses Google's `text-embedding-004` model. Create your key from the [Google AI Studio](https://ai.google.dev/gemini-api/docs/api-key).
-    -   `DATABASE_SERVICE_URL`: We recommend [Supabase](https://supabase.com) for a free, hosted PGVector database. Create a project and find your connection string under `Project Settings > Database`.
+    -   `DATABASE_SERVICE_URL`: We recommend [Supabase](https://supabase.com) for a free, hosted PGVector database. Create a project and find your connection string under `Organization > Project > Connect`.
     -   `SECRET_TOKEN`: Generate a secure random string using a tool like the [IT Tools Token Generator](https://it-tools.tech/token-generator). This is used to secure the webhook between Telegram and the agent.
-    -   **Observability (Optional):** To track the agent's performance, you can use Comet's Opik. Get your `API_KEY_OPIK`, `OPIK_WORKSPACE`, and `OPIK_PROJECT_NAME` from the [Comet Opik Docs](https://www.comet.com/docs/opik/quickstart).
+    -   **Observability:** To track the agent's performance, you can use Comet's Opik. Get your `API_KEY_OPIK`, `OPIK_WORKSPACE`, and `OPIK_PROJECT_NAME` from the [Comet Opik Docs](https://www.comet.com/docs/opik/quickstart).
 
     > **Note:** You can leave `TABLE_NAME`, `EMBEDDING_DIMENSIONS`, `TIME_PARTITION_INTERVAL`, and `OPENAI_API_KEY` with their default values for now.
 
@@ -178,3 +186,5 @@ The CI/CD pipeline performs the following steps on a push to the `main` branch:
 3.  Connects to the target EC2 instance via SSH.
 4.  Pulls the latest Docker image from ECR.
 5.  Stops the old container and runs a new one with the updated image.
+
+This agent is deployed! You can test it in https://t.me/AgenticAgent_bot

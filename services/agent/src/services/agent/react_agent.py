@@ -59,7 +59,7 @@ vector_store = PGVectorStore.from_params(
     password=config.database_service_url.split(":")[-2].split("@")[0],
     port=config.database_service_url.split(":")[-1].split("/")[0],
     user=config.database_service_url.split("//")[-1].split(":")[0],
-    table_name=config.table_name,
+    table_name="memory",
     embed_dim=config.embedding_dimensions,
 )
 vector_memory = VectorMemory.from_defaults(
