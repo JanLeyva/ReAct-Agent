@@ -1,6 +1,6 @@
 <p align="center">
-        <img alt="logo" src="docs/img/whatsapp-agent.svg" width=1000 />
-    <h1 align="center">📱 Restaurant Agent 📱</h1>
+        <img alt="logo" src="docs/img/Diagram-Agent.svg" width=1000 />
+    <h1 align="center">📱 Restaurants Recommender Agent 📱</h1>
     <h3 align="center"> Test the Agent<a href="https://t.me/AgenticAgent_bot"> here</a></h3>
 </p>
 
