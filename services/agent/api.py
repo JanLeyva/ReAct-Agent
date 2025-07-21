@@ -2,6 +2,7 @@
 import json
 from typing import Optional
 import requests
+from urllib.parse import urlparse
 
 # internal libs
 from src.services.load_restaurants.upload_place import GetUploadPlace
@@ -18,11 +19,37 @@ from fastapi import FastAPI, HTTPException, Header
 from starlette import status
 from pydantic import BaseModel
 from loguru import logger
-
-agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
+from llama_index.core.agent.workflow import FunctionAgent
+from llama_index.core.memory import BaseMemory, Memory, FactExtractionMemoryBlock, VectorMemoryBlock
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from llama_index.vector_stores.postgres import PGVectorStore
+# agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
+agent = FunctionAgent(llm=llm, tools=tools)
 app = FastAPI()
 vec = VectorStore()
+embed_model = GoogleGenAIEmbedding(
+            model_name="text-embedding-004",
+            embed_batch_size=100,
+            api_key=config.api_key_google_genai,
+        )
 
+uri = config.database_service_url
+result = urlparse(uri)
+
+vector_store = PGVectorStore.from_params(
+    database=result.path.lstrip('/'),
+    host=result.hostname,
+    password=result.password,
+    port=result.port,
+    user=result.username,
+    table_name="long-term-memory",
+    embed_dim=config.embedding_dimensions,
+    use_halfvec=True,  # Enable half precision
+)
+
+from sqlalchemy.ext.asyncio import create_async_engine
+
+# engine = create_async_engine("postgresql+asyncpg://postgres:ryEDKjXFzuGYeupP@db.zssxhluzyruxliweoslk.supabase.co:5432/postgres")
 
 class User(BaseModel):
     id: int
@@ -78,15 +105,47 @@ def health():
     return {"message": "OK"}
 
 
-async def generate(message: str) -> str:
+def get_memory_session(chat_id: str) -> Memory:
+    """
+    """
+    blocks = [
+        FactExtractionMemoryBlock(
+            name="extracted_info",
+            llm=llm,
+            max_facts=50,
+            priority=1,
+        ),
+        VectorMemoryBlock(
+            name="vector_memory",
+            # required: pass in a vector store like qdrant, chroma, weaviate, milvus, etc.
+            vector_store=vector_store,
+            priority=2,
+            embed_model=embed_model,
+            # The top-k message batches to retrieve
+            # similarity_top_k=2,
+            # optional: How many previous messages to include in the retrieval query
+            # retrieval_context_window=5
+            # optional: pass optional node-postprocessors for things like similarity threshold, etc.
+            # node_postprocessors=[...],
+        ),
+    ]
+    return Memory.from_defaults(session_id=chat_id,
+                                memory_blocks=blocks,
+                                token_limit=4000,
+                                chat_history_token_ratio=0.7,
+                                token_flush_size=3000,
+                                 )
+
+
+async def generate(message: str, memory: BaseMemory) -> str:
     # Run the agent
-    response = await agent.run(input=message)
+    response = await agent.run(message, memory=memory)
     logger.info(response)
-    return response["response"]
+    return response.response.blocks[0].text
 
 
 @app.post("/telegram/")
-def get_agent_response(
+async def get_agent_response(
     update: UpdateTelegram,
     x_telegram_bot_api_secret_token: Optional[str] = Header(None),
 ):
@@ -96,7 +155,12 @@ def get_agent_response(
         text = message.text
         logger.info(f"response: {message} | chat_id: {chat_id}")
         if text:
-            response = asyncio.run(generate(text))
+            
+            memory = get_memory_session(str(chat_id))
+            # chat_history = memory.get(messages=[...])
+            # logger.info(f"chat_history: \n{chat_history}")
+
+            response = await generate(text, memory)
             requests.post(
                 f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
                 json={"chat_id": chat_id, "text": response, "parse_mode": "HTML"},
@@ -105,6 +169,7 @@ def get_agent_response(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
     )
+
 
 
 @app.post("/search/query/")
