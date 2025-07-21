@@ -46,7 +46,7 @@ def get_memory_session(chat_id: str) -> Memory:
         FactExtractionMemoryBlock(
             name="extracted_info",
             llm=llm,
-            max_facts=50,
+            max_facts=20,
             priority=1,
         ),
         VectorMemoryBlock(
