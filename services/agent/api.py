@@ -13,7 +13,6 @@ from src.services.agent.tools import tools
 from src.config import config
 
 # 3rd party
-import asyncio
 import uvicorn
 from fastapi import FastAPI, HTTPException, Header
 from starlette import status
@@ -23,8 +22,18 @@ from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.core.memory import BaseMemory, Memory, FactExtractionMemoryBlock, VectorMemoryBlock
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.core.tools import FunctionTool
 # agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
-agent = FunctionAgent(llm=llm, tools=tools)
+def get_weather() -> str:
+    """Usfeful for getting the weather for a given location."""
+    return "test"
+
+
+tool = FunctionTool.from_defaults(
+    get_weather,
+)
+
+agent = FunctionAgent(llm=llm, tools=[tool])
 app = FastAPI()
 vec = VectorStore()
 embed_model = GoogleGenAIEmbedding(
@@ -36,20 +45,6 @@ embed_model = GoogleGenAIEmbedding(
 uri = config.database_service_url
 result = urlparse(uri)
 
-vector_store = PGVectorStore.from_params(
-    database=result.path.lstrip('/'),
-    host=result.hostname,
-    password=result.password,
-    port=result.port,
-    user=result.username,
-    table_name="long-term-memory",
-    embed_dim=config.embedding_dimensions,
-    use_halfvec=True,  # Enable half precision
-)
-
-from sqlalchemy.ext.asyncio import create_async_engine
-
-# engine = create_async_engine("postgresql+asyncpg://postgres:ryEDKjXFzuGYeupP@db.zssxhluzyruxliweoslk.supabase.co:5432/postgres")
 
 class User(BaseModel):
     id: int
@@ -108,6 +103,16 @@ def health():
 def get_memory_session(chat_id: str) -> Memory:
     """
     """
+    vector_store = PGVectorStore.from_params(
+        database=result.path.lstrip('/'),
+        host=result.hostname,
+        password=result.password,
+        port=result.port,
+        user=result.username,
+        table_name="long-term-memory",
+        embed_dim=config.embedding_dimensions,
+        use_halfvec=True,  # Enable half precision
+    )
     blocks = [
         FactExtractionMemoryBlock(
             name="extracted_info",
@@ -117,19 +122,16 @@ def get_memory_session(chat_id: str) -> Memory:
         ),
         VectorMemoryBlock(
             name="vector_memory",
-            # required: pass in a vector store like qdrant, chroma, weaviate, milvus, etc.
             vector_store=vector_store,
             priority=2,
             embed_model=embed_model,
-            # The top-k message batches to retrieve
-            # similarity_top_k=2,
-            # optional: How many previous messages to include in the retrieval query
-            # retrieval_context_window=5
-            # optional: pass optional node-postprocessors for things like similarity threshold, etc.
-            # node_postprocessors=[...],
         ),
     ]
+    
+    async_database_uri = f"postgresql+asyncpg://{result.username}:{result.password}@{result.hostname}:{result.port}{result.path}"
+
     return Memory.from_defaults(session_id=chat_id,
+                                async_database_uri=async_database_uri,
                                 memory_blocks=blocks,
                                 token_limit=4000,
                                 chat_history_token_ratio=0.7,
