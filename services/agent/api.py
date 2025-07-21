@@ -2,27 +2,30 @@
 import json
 from typing import Optional
 import requests
-from urllib.parse import urlparse
 
 # internal libs
 from src.services.load_restaurants.upload_place import GetUploadPlace
-from src.services.agent.react_agent import ReActAgent
 from src.services.search_engine.vector_store import VectorStore
 from src.shared.llm.factory import llm
-from src.services.agent.tools import tools
+from src.services.agent.memory import get_memory_session
 from src.config import config
+from src.shared.api.base import (
+    UpdateTelegram,
+    SearchEngineQuery,
+    SearchEngineQueryCoord,
+)
 
 # 3rd party
 import uvicorn
 from fastapi import FastAPI, HTTPException, Header
 from starlette import status
-from pydantic import BaseModel
+
 from loguru import logger
 from llama_index.core.agent.workflow import FunctionAgent
-from llama_index.core.memory import BaseMemory, Memory, FactExtractionMemoryBlock, VectorMemoryBlock
-from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
-from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.core.memory import BaseMemory
 from llama_index.core.tools import FunctionTool
+
+
 # agent = ReActAgent(llm=llm, tools=tools, timeout=120, verbose=True)
 def get_weather() -> str:
     """Usfeful for getting the weather for a given location."""
@@ -36,107 +39,11 @@ tool = FunctionTool.from_defaults(
 agent = FunctionAgent(llm=llm, tools=[tool])
 app = FastAPI()
 vec = VectorStore()
-embed_model = GoogleGenAIEmbedding(
-            model_name="text-embedding-004",
-            embed_batch_size=100,
-            api_key=config.api_key_google_genai,
-        )
-
-uri = config.database_service_url
-result = urlparse(uri)
-
-
-class User(BaseModel):
-    id: int
-    is_bot: bool
-    first_name: str
-    last_name: Optional[str] = None
-    username: Optional[str] = None
-
-
-class Chat(BaseModel):
-    id: int
-    type: str
-    title: Optional[str] = None
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-
-
-class Message(BaseModel):
-    message_id: int
-    from_user: Optional[User] = None
-    chat: Chat
-    date: int
-    text: Optional[str] = None
-
-
-class CallbackQuery(BaseModel):
-    id: str
-    from_user: User
-    message: Optional[Message] = None
-    inline_message_id: Optional[str] = None
-    chat_instance: str
-    data: Optional[str] = None
-
-
-class UpdateTelegram(BaseModel):
-    update_id: int
-    message: Optional[Message] = None
-
-
-class SearchEngineQuery(BaseModel):
-    query: str
-
-
-class SearchEngineQueryCoord(SearchEngineQuery):
-    long: float
-    lat: float
-    distance: int
 
 
 @app.get("/")
 def health():
     return {"message": "OK"}
-
-
-def get_memory_session(chat_id: str) -> Memory:
-    """
-    """
-    vector_store = PGVectorStore.from_params(
-        database=result.path.lstrip('/'),
-        host=result.hostname,
-        password=result.password,
-        port=result.port,
-        user=result.username,
-        table_name="long-term-memory",
-        embed_dim=config.embedding_dimensions,
-        use_halfvec=True,  # Enable half precision
-    )
-    blocks = [
-        FactExtractionMemoryBlock(
-            name="extracted_info",
-            llm=llm,
-            max_facts=50,
-            priority=1,
-        ),
-        VectorMemoryBlock(
-            name="vector_memory",
-            vector_store=vector_store,
-            priority=2,
-            embed_model=embed_model,
-        ),
-    ]
-    
-    async_database_uri = f"postgresql+asyncpg://{result.username}:{result.password}@{result.hostname}:{result.port}{result.path}"
-
-    return Memory.from_defaults(session_id=chat_id,
-                                async_database_uri=async_database_uri,
-                                memory_blocks=blocks,
-                                token_limit=4000,
-                                chat_history_token_ratio=0.7,
-                                token_flush_size=3000,
-                                 )
 
 
 async def generate(message: str, memory: BaseMemory) -> str:
@@ -157,11 +64,7 @@ async def get_agent_response(
         text = message.text
         logger.info(f"response: {message} | chat_id: {chat_id}")
         if text:
-            
             memory = get_memory_session(str(chat_id))
-            # chat_history = memory.get(messages=[...])
-            # logger.info(f"chat_history: \n{chat_history}")
-
             response = await generate(text, memory)
             requests.post(
                 f"https://api.telegram.org/bot{config.api_key_bot_telegram}/sendMessage",
@@ -171,7 +74,6 @@ async def get_agent_response(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect secret_token"
     )
-
 
 
 @app.post("/search/query/")
