@@ -154,10 +154,9 @@ To connect your bot to the running agent, you need to set a webhook.
 
 -   **Set Webhook:**
     ```bash
-    curl -X POST \
+    curl -X POST "https://api.telegram.org/bot<YOUR_TELEGRAM_TOKEN>/setWebhook" \
       -H "Content-Type: application/json" \
-      -d '{"url": "YOUR_AGENT_ENDPOINT_URL", "secret_token": "YOUR_SECRET_TOKEN"}' \
-      "https://api.telegram.org/bot<YOUR_TELEGRAM_TOKEN>/setWebhook"
+      -d '{"url": "YOUR_AGENT_ENDPOINT_URL", "secret_token": "YOUR_SECRET_TOKEN"}'
     ```
 
 -   **Delete Webhook:**
