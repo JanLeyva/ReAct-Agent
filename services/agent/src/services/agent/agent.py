@@ -85,11 +85,11 @@ class ReActAgent(BaseWorkflowAgent):
     ) -> AgentOutput:
         """Take a single step with the React agent."""
         # remove system prompt, since the react prompt will be combined with it
-        if llm_input[0].role == "system":
-            system_prompt = llm_input[0].content or ""
-            llm_input = llm_input[1:]
-        else:
-            system_prompt = ""
+        # if llm_input[0].role == "system":
+        #     system_prompt = llm_input[0].content or ""
+        #     llm_input = llm_input[1:]
+        # else:
+        #     system_prompt = ""
 
         output_parser = self.output_parser
         react_chat_formatter = self.formatter
