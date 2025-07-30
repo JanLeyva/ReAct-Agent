@@ -20,9 +20,6 @@ embed_model = GoogleGenAIEmbedding(
     api_key=config.api_key_google_genai,
 )
 
-uri = config.database_service_url
-result = urlparse(uri)
-
 
 def get_memory_session(chat_id: str) -> Memory:
     """
@@ -32,12 +29,15 @@ def get_memory_session(chat_id: str) -> Memory:
     Returns:
         Memory: object to handle memory using psotgres as vector database.
     """
+    db_credentials = urlparse(config.database_service_url)
+    async_database_uri = f"postgresql+asyncpg://{db_credentials.username}:{db_credentials.password}@{db_credentials.hostname}:{db_credentials.port}{db_credentials.path}"
+
     vector_store = PGVectorStore.from_params(
-        database=result.path.lstrip("/"),
-        host=result.hostname,
-        password=result.password,
-        port=result.port,
-        user=result.username,
+        database=db_credentials.path.lstrip("/"),
+        host=db_credentials.hostname,
+        password=db_credentials.password,
+        port=db_credentials.port,
+        user=db_credentials.username,
         table_name="long-term-memory",
         embed_dim=config.embedding_dimensions,
         use_halfvec=True,  # Enable half precision
@@ -56,8 +56,6 @@ def get_memory_session(chat_id: str) -> Memory:
             embed_model=embed_model,
         ),
     ]
-
-    async_database_uri = f"postgresql+asyncpg://{result.username}:{result.password}@{result.hostname}:{result.port}{result.path}"
 
     return Memory.from_defaults(
         session_id=chat_id,

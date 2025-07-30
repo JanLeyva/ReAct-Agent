@@ -3,35 +3,35 @@ import json
 from typing import Optional
 import requests
 
-# 3rd party
-from fastapi import APIRouter, Header, HTTPException
-from loguru import logger
-from llama_index.core.agent.workflow import FunctionAgent
-from llama_index.core.memory import BaseMemory
-from llama_index.core.tools import FunctionTool
-from starlette import status
-
 # internal libs
 from src.config import config
 from src.services.agent.memory import get_memory_session
 from src.shared.api.base import UpdateTelegram
 from src.shared.llm.factory import llm
+from src.services.agent.tools import tools
+from src.services.agent.agent import ReActAgent
+
+# 3rd party
+from fastapi import APIRouter, Header, HTTPException
+from loguru import logger
+from llama_index.core.memory import BaseMemory
+from starlette import status
+
 
 router = APIRouter(prefix="/generate", tags=["generate"])
-
-def get_weather() -> str:
-    """Usfeful for getting the weather for a given location."""
-    return "test"
-
-tool = FunctionTool.from_defaults(get_weather)
-agent = FunctionAgent(llm=llm, tools=[tool])
+agent = ReActAgent(llm=llm, tools=tools)
 
 
 async def _generate_response(message: str, memory: BaseMemory) -> str:
     # Run the agent
     response = await agent.run(message, memory=memory)
-    logger.info(response)
-    return response.response.blocks[0].text
+    if response.tool_calls:
+        output = response.tool_calls[-1].tool_output.blocks[-1].text
+        logger.info(f"tool_calls: {output}")
+        return f"Base on yours specifications we found: {output}"
+    output = response.response.blocks[0].text
+    logger.info(output)
+    return output
 
 
 @router.post("/telegram/")

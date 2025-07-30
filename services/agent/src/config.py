@@ -17,6 +17,7 @@ class Config(BaseSettings):
     model_provider: Literal["groq", "openai"]
     model_name: Literal["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gpt-4o-min"]
     database_service_url: str
+    database_service_url_pool: str  # TODO delete? if is not in use
     cohere_api_key: str
     table_name: str
     embedding_dimensions: int
