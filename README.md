@@ -174,6 +174,10 @@ To connect your bot to the running agent, you need to set a webhook.
 5.  The `search_engine` performs a semantic search in the PGVector database and returns the most relevant results.
 6.  The agent uses the results to formulate a helpful response and sends it back to the user via the Telegram API.
 
+<p align="center">
+        <img alt="logo" src="docs/img/agent_workflow_background.svg" width=1000 />
+</p>
+
 ---
 
 ## Deployment - Infrastructure (AWS)
