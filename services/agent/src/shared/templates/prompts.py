@@ -41,5 +41,3 @@ with (Path(__file__).parents[0] / Path("summary_description_to_show.md")).open(
     "r"
 ) as f:
     SUMMARY_DESCRIPTION_TO_SHOW = f.read()
-
-

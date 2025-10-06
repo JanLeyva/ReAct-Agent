@@ -247,7 +247,7 @@ class VectorStore:
 
         def _fill_template(idx, place: pl.Series) -> str:
             """fill the output template of the agent"""
-            template = f"<b>{idx+1}: {place['name']}:</b> {place['contents']}\n"
+            template = f"<b>{idx + 1}: {place['name']}:</b> {place['contents']}\n"
             template += (
                 f"<a href='{place['website']}'>website</a> | "
                 if place["website"] is not None
