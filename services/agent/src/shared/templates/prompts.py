@@ -19,6 +19,8 @@ Here is some context to help you answer the question and plan:
     1,
 )
 
+with (Path(__file__).parents[0] / Path("rewrite.md")).open("r") as f:
+    REWRITE = f.read()
 
 with (Path(__file__).parents[0] / Path("router_template.md")).open("r") as f:
     ROUTER_PROMPT = f.read()
@@ -39,3 +41,5 @@ with (Path(__file__).parents[0] / Path("summary_description_to_show.md")).open(
     "r"
 ) as f:
     SUMMARY_DESCRIPTION_TO_SHOW = f.read()
+
+

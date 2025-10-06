@@ -9,7 +9,7 @@ from src.services.agent.memory import get_memory_session
 from src.shared.api.base import UpdateTelegram
 from src.shared.llm.factory import llm
 from src.services.agent.tools import tools
-from src.services.agent.agent import ReActAgent
+from src.services.agent.agent import RestaurantWorkflow
 
 # 3rd party
 from fastapi import APIRouter, Header, HTTPException
@@ -19,7 +19,7 @@ from starlette import status
 
 
 router = APIRouter(prefix="/generate", tags=["generate"])
-agent = ReActAgent(llm=llm, tools=tools)
+agent = RestaurantWorkflow(llm=llm, tools=tools)
 
 
 async def _generate_response(message: str, memory: BaseMemory) -> str:
